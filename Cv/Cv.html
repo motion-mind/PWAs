@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Coefficient Calculator</title>
+    <!-- Link to manifest.json for PWA capabilities -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 28rem;
+            width: 100%;
+            border: 1px solid #e5e7eb; /* Light border */
+        }
+        input[type="number"] {
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db; /* Gray border */
+            border-radius: 0.5rem;
+            width: 100%;
+            font-size: 1rem;
+            color: #374151; /* Darker text */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #6366f1; /* Indigo focus border */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); /* Indigo focus shadow */
+        }
+        .label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4b5563; /* Medium gray text */
+        }
+        .button {
+            background-color: #6366f1; /* Indigo */
+            color: #ffffff;
+            padding: 0.85rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            width: 100%;
+            border: none;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+        }
+        .button:hover {
+            background-color: #4f46e5; /* Darker indigo on hover */
+            transform: translateY(-1px);
+        }
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(99, 102, 241, 0.3);
+        }
+        .result-box {
+            background-color: #e0f2fe; /* Light blue */
+            border: 1px solid #90cdf4; /* Medium blue border */
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e40af; /* Dark blue text */
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .error-message {
+            color: #dc2626; /* Red */
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Flow Coefficient Calculator</h1>
+
+        <div class="mb-6">
+            <label for="oldCfmFlow" class="label">Old CFM Flow (CFM):</label>
+            <input type="number" id="oldCfmFlow" placeholder="e.g., 1000" class="focus:border-indigo-500 focus:ring-indigo-500">
+        </div>
+
+        <div class="mb-6">
+            <label for="newCfmFlow" class="label">New CFM Flow (CFM):</label>
+            <input type="number" id="newCfmFlow" placeholder="e.g., 1200" class="focus:border-indigo-500 focus:ring-indigo-500">
+        </div>
+
+        <div class="mb-8">
+            <label for="oldFlowCoefficient" class="label">Old Flow Coefficient (Cv):</label>
+            <input type="number" id="oldFlowCoefficient" placeholder="e.g., 50" class="focus:border-indigo-500 focus:ring-indigo-500">
+        </div>
+
+        <button onclick="calculateFlowCoefficient()" class="button">
+            Calculate New Flow Coefficient
+        </button>
+
+        <div id="result" class="result-box hidden">
+            New Flow Coefficient (Cv): <span id="newFlowCoefficientValue" class="font-bold"></span>
+        </div>
+
+        <div id="errorMessage" class="error-message hidden">
+            Please enter valid positive numbers for all fields.
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Calculates the new flow coefficient based on the provided old CFM flow,
+         * new CFM flow, and old flow coefficient.
+         *
+         * The formula used is: New Cv = Old Cv * (New CFM / Old CFM)
+         *
+         * It retrieves values from input fields, performs validation,
+         * calculates the result, and displays it or an error message.
+         */
+        function calculateFlowCoefficient() {
+            // Get input values
+            const oldCfmFlow = parseFloat(document.getElementById('oldCfmFlow').value);
+            const newCfmFlow = parseFloat(document.getElementById('newCfmFlow').value);
+            const oldFlowCoefficient = parseFloat(document.getElementById('oldFlowCoefficient').value);
+
+            // Get display elements
+            const resultDiv = document.getElementById('result');
+            const newFlowCoefficientValueSpan = document.getElementById('newFlowCoefficientValue');
+            const errorMessageDiv = document.getElementById('errorMessage');
+
+            // Hide previous results/errors
+            resultDiv.classList.add('hidden');
+            errorMessageDiv.classList.add('hidden');
+
+            // Input validation
+            if (isNaN(oldCfmFlow) || oldCfmFlow <= 0 ||
+                isNaN(newCfmFlow) || newCfmFlow <= 0 ||
+                isNaN(oldFlowCoefficient) || oldFlowCoefficient <= 0) {
+                errorMessageDiv.classList.remove('hidden');
+                return; // Stop execution if validation fails
+            }
+
+            // Calculate new flow coefficient
+            // Formula: New Cv = Old Cv * (New CFM / Old CFM)
+            const newFlowCoefficient = oldFlowCoefficient * (newCfmFlow / oldCfmFlow);
+
+            // Display the result, formatted to 2 decimal places
+            newFlowCoefficientValueSpan.textContent = newFlowCoefficient.toFixed(2);
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Register the service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

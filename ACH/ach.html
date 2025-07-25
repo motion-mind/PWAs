@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexible ACH Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link to manifest.json for PWA capabilities -->
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom styles for better focus and interaction */
+        input:focus, button:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Blue glow on focus */
+        }
+        input:disabled {
+            background-color: #e2e8f0; /* Lighter gray for disabled inputs */
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Flexible ACH Calculator</h1>
+
+        <!-- Calculation Mode Selection -->
+        <div class="mb-6">
+            <label for="calculationMode" class="block text-gray-700 text-sm font-semibold mb-2">
+                What do you want to calculate?
+            </label>
+            <select id="calculationMode"
+                    class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+                <option value="ach">Air Changes Per Hour (ACH)</option>
+                <option value="cfm">Cubic Feet per Minute (CFM)</option>
+                <option value="volume">Room Volume (Cubic Feet)</option>
+            </select>
+        </div>
+
+        <!-- Input for CFM -->
+        <div class="mb-4">
+            <label for="cfm" class="block text-gray-700 text-sm font-semibold mb-2">
+                CFM (Cubic Feet per Minute)
+            </label>
+            <input type="number" id="cfm" placeholder="e.g., 500"
+                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+        </div>
+
+        <!-- Input for ACH -->
+        <div class="mb-4">
+            <label for="achInput" class="block text-gray-700 text-sm font-semibold mb-2">
+                Air Changes Per Hour (ACH)
+            </label>
+            <input type="number" id="achInput" placeholder="e.g., 5"
+                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+        </div>
+
+        <!-- Input for Room Volume -->
+        <div class="mb-6">
+            <label for="roomVolumeInput" class="block text-gray-700 text-sm font-semibold mb-2">
+                Room Volume (Cubic Feet)
+            </label>
+            <input type="number" id="roomVolumeInput" placeholder="e.g., 960 (10x12x8)"
+                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+        </div>
+
+        <!-- Calculate Button -->
+        <button id="calculateBtn"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-200 ease-in-out transform hover:scale-105">
+            Calculate
+        </button>
+
+        <!-- Result Display -->
+        <div id="resultContainer" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center hidden">
+            <p class="text-gray-700 text-sm font-semibold mb-2">Result:</p>
+            <p id="calculatedResult" class="text-4xl font-extrabold text-blue-700"></p>
+            <p id="resultUnit" class="text-gray-600 text-lg mt-2"></p>
+        </div>
+
+        <!-- Error Message Display -->
+        <div id="errorContainer" class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-center hidden">
+            <p id="errorMessage" class="text-red-700 font-medium"></p>
+        </div>
+    </div>
+
+    <script>
+        // Get references to DOM elements
+        const calculationModeSelect = document.getElementById('calculationMode');
+        const cfmInput = document.getElementById('cfm');
+        const achInput = document.getElementById('achInput');
+        const roomVolumeInput = document.getElementById('roomVolumeInput'); // New: Single room volume input
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const calculatedResult = document.getElementById('calculatedResult');
+        const resultUnit = document.getElementById('resultUnit');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorMessage = document.getElementById('errorMessage');
+
+        /**
+         * Hides the result and error containers.
+         */
+        function hideMessages() {
+            resultContainer.classList.add('hidden');
+            errorContainer.classList.add('hidden');
+        }
+
+        /**
+         * Displays an error message.
+         * @param {string} message - The error message to display.
+         */
+        function displayError(message) {
+            hideMessages(); // Hide any previous messages
+            errorMessage.textContent = message;
+            errorContainer.classList.remove('hidden');
+        }
+
+        /**
+         * Displays the calculated result.
+         * @param {number} value - The calculated value.
+         * @param {string} unit - The unit of the calculated value.
+         */
+        function displayResult(value, unit) {
+            hideMessages(); // Hide any previous messages
+            calculatedResult.textContent = value.toFixed(2); // Format to 2 decimal places
+            resultUnit.textContent = unit;
+            resultContainer.classList.remove('hidden');
+        }
+
+        /**
+         * Toggles the disabled state of input fields based on the selected calculation mode.
+         */
+        function updateInputStates() {
+            const mode = calculationModeSelect.value;
+
+            // Enable all inputs first
+            cfmInput.disabled = false;
+            achInput.disabled = false;
+            roomVolumeInput.disabled = false; // Enable the new volume input
+
+            // Disable the input corresponding to the calculation mode
+            if (mode === 'ach') {
+                achInput.disabled = true;
+            } else if (mode === 'cfm') {
+                cfmInput.disabled = true;
+            } else if (mode === 'volume') {
+                roomVolumeInput.disabled = true;
+            }
+            hideMessages(); // Clear messages when mode changes
+        }
+
+        /**
+         * Handles the calculation when the button is clicked.
+         */
+        calculateBtn.addEventListener('click', () => {
+            hideMessages(); // Clear previous messages
+
+            const mode = calculationModeSelect.value;
+            const cfm = parseFloat(cfmInput.value);
+            const ach = parseFloat(achInput.value);
+            const roomVolume = parseFloat(roomVolumeInput.value); // Get value from single room volume input
+
+            let calculatedValue;
+            let unit;
+
+            switch (mode) {
+                case 'ach':
+                    // Calculate ACH: ACH = (CFM * 60) / Room Volume
+                    if (isNaN(cfm) || cfm <= 0) {
+                        displayError('Please enter a valid positive number for CFM.');
+                        return;
+                    }
+                    if (isNaN(roomVolume) || roomVolume <= 0) {
+                        displayError('Please enter a valid positive number for Room Volume.');
+                        return;
+                    }
+                    calculatedValue = (cfm * 60) / roomVolume;
+                    unit = 'ACH';
+                    break;
+                case 'cfm':
+                    // Calculate CFM: CFM = (ACH * Room Volume) / 60
+                    if (isNaN(ach) || ach <= 0) {
+                        displayError('Please enter a valid positive number for ACH.');
+                        return;
+                    }
+                    if (isNaN(roomVolume) || roomVolume <= 0) {
+                        displayError('Please enter a valid positive number for Room Volume.');
+                        return;
+                    }
+                    calculatedValue = (ach * roomVolume) / 60;
+                    unit = 'CFM';
+                    break;
+                case 'volume':
+                    // Calculate Room Volume: Room Volume = (CFM * 60) / ACH
+                    if (isNaN(cfm) || cfm <= 0) {
+                        displayError('Please enter a valid positive number for CFM.');
+                        return;
+                    }
+                    if (isNaN(ach) || ach <= 0) {
+                        displayError('Please enter a valid positive number for ACH.');
+                        return;
+                    }
+                    calculatedValue = (cfm * 60) / ach;
+                    unit = 'Cubic Feet';
+                    break;
+                default:
+                    displayError('Invalid calculation mode selected.');
+                    return;
+            }
+
+            displayResult(calculatedValue, unit);
+        });
+
+        // Event listener for mode change
+        calculationModeSelect.addEventListener('change', updateInputStates);
+
+        // Initial update of input states when the page loads
+        updateInputStates();
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Register the service worker with an absolute path from the root
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
