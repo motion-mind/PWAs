@@ -10,6 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Base styles for body, ensuring full height and centering */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6; /* Light gray background */
@@ -17,23 +18,34 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 1rem;
+            padding: 1rem; /* Base padding for very small screens */
             box-sizing: border-box;
         }
+
+        /* Container styling with responsive padding and max-width */
         .container {
             background-color: #ffffff;
-            padding: 2.5rem;
+            padding: 1.5rem; /* Default padding for smaller screens */
             border-radius: 1rem;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            max-width: 28rem;
-            width: 100%;
+            max-width: 28rem; /* Max width for larger screens */
+            width: 100%; /* Ensures it takes full width on smaller screens */
             border: 1px solid #e5e7eb; /* Light border */
         }
+
+        /* Media query for medium screens and up (e.g., tablets, desktops) */
+        @media (min-width: 640px) { /* Tailwind's 'sm' breakpoint */
+            .container {
+                padding: 2.5rem; /* Larger padding for larger screens */
+            }
+        }
+
+        /* Input field styling */
         input[type="number"] {
             padding: 0.75rem 1rem;
             border: 1px solid #d1d5db; /* Gray border */
             border-radius: 0.5rem;
-            width: 100%;
+            width: 100%; /* Ensures full width */
             font-size: 1rem;
             color: #374151; /* Darker text */
             transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -49,26 +61,8 @@
             font-weight: 500;
             color: #4b5563; /* Medium gray text */
         }
-        .button {
-            background-color: #6366f1; /* Indigo */
-            color: #ffffff;
-            padding: 0.85rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
-            width: 100%;
-            border: none;
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
-        }
-        .button:hover {
-            background-color: #4f46e5; /* Darker indigo on hover */
-            transform: translateY(-1px);
-        }
-        .button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(99, 102, 241, 0.3);
-        }
+
+        /* Result and error message styling */
         .result-box {
             background-color: #e0f2fe; /* Light blue */
             border: 1px solid #90cdf4; /* Medium blue border */
@@ -107,9 +101,7 @@
             <input type="number" id="oldFlowCoefficient" placeholder="e.g., 50" class="focus:border-indigo-500 focus:ring-indigo-500">
         </div>
 
-        <button onclick="calculateFlowCoefficient()" class="button">
-            Calculate New Flow Coefficient
-        </button>
+        <!-- The calculate button has been removed -->
 
         <div id="result" class="result-box hidden">
             New Flow Coefficient (Cv): <span id="newFlowCoefficientValue" class="font-bold"></span>
@@ -172,6 +164,14 @@
                     .catch(error => {
                         console.error('Service Worker registration failed:', error);
                     });
+
+                // Add event listeners to input fields for real-time calculation
+                document.getElementById('oldCfmFlow').addEventListener('input', calculateFlowCoefficient);
+                document.getElementById('newCfmFlow').addEventListener('input', calculateFlowCoefficient);
+                document.getElementById('oldFlowCoefficient').addEventListener('input', calculateFlowCoefficient);
+
+                // Perform an initial calculation in case there are pre-filled values
+                calculateFlowCoefficient();
             });
         }
     </script>
