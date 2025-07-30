@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEC Motor Setup</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for better aesthetics */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">TEC Motor Setup</h1>
+
+        <!-- Actuator 1 Group -->
+        <div class="mb-6 bg-blue-50 p-4 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold text-blue-700 mb-4">Actuator 1</h2>
+            <select id="actuator1" name="actuator1" class="block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-lg">
+                <option value="0">Not Used</option>
+                <option value="1">Enable</option>
+                <option value="3">Enable & Reverse</option>
+            </select>
+        </div>
+
+        <!-- Actuator 2 Group -->
+        <div class="mb-6 bg-green-50 p-4 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold text-green-700 mb-4">Actuator 2</h2>
+            <select id="actuator2" name="actuator2" class="block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-green-500 focus:border-green-500 text-lg">
+                <option value="0">Not Used</option>
+                <option value="4">Enable</option>
+                <option value="12">Enable & Reverse</option>
+            </select>
+        </div>
+
+        <!-- Actuator 3 Group -->
+        <div class="mb-8 bg-purple-50 p-4 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold text-purple-700 mb-4">Actuator 3</h2>
+            <select id="actuator3" name="actuator3" class="block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 text-lg">
+                <option value="0">Not Used</option>
+                <option value="16">Enable</option>
+                <option value="48">Enable & Reverse</option>
+            </select>
+        </div>
+
+        <!-- Total Display -->
+        <div class="text-center bg-gray-200 p-4 rounded-lg shadow-inner">
+            <p class="text-2xl font-bold text-gray-800">Motor Setup Value: <span id="totalValue" class="text-blue-600">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to calculate and display the total value
+        function calculateTotal() {
+            let total = 0;
+
+            // Get selected value for Actuator 1 from the dropdown
+            const actuator1Value = parseInt(document.getElementById('actuator1').value);
+            total += actuator1Value;
+
+            // Get selected value for Actuator 2 from the dropdown
+            const actuator2Value = parseInt(document.getElementById('actuator2').value);
+            total += actuator2Value;
+
+            // Get selected value for Actuator 3 from the dropdown
+            const actuator3Value = parseInt(document.getElementById('actuator3').value);
+            total += actuator3Value;
+
+            // Display the total
+            document.getElementById('totalValue').textContent = total;
+        }
+
+        // Add event listeners to all select elements to trigger calculation on change
+        document.getElementById('actuator1').addEventListener('change', calculateTotal);
+        document.getElementById('actuator2').addEventListener('change', calculateTotal);
+        document.getElementById('actuator3').addEventListener('change', calculateTotal);
+
+        // Initial calculation when the page loads
+        document.addEventListener('DOMContentLoaded', calculateTotal);
+    </script>
+</body>
+</html>
