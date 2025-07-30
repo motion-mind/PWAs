@@ -70,12 +70,6 @@
                    class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
         </div>
 
-        <!-- Calculate Button -->
-        <button id="calculateBtn"
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-200 ease-in-out transform hover:scale-105">
-            Calculate
-        </button>
-
         <!-- Result Display -->
         <div id="resultContainer" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center hidden">
             <p class="text-gray-700 text-sm font-semibold mb-2">Result:</p>
@@ -94,8 +88,7 @@
         const calculationModeSelect = document.getElementById('calculationMode');
         const cfmInput = document.getElementById('cfm');
         const achInput = document.getElementById('achInput');
-        const roomVolumeInput = document.getElementById('roomVolumeInput'); // New: Single room volume input
-        const calculateBtn = document.getElementById('calculateBtn');
+        const roomVolumeInput = document.getElementById('roomVolumeInput'); // Single room volume input
         const resultContainer = document.getElementById('resultContainer');
         const calculatedResult = document.getElementById('calculatedResult');
         const resultUnit = document.getElementById('resultUnit');
@@ -141,7 +134,7 @@
             // Enable all inputs first
             cfmInput.disabled = false;
             achInput.disabled = false;
-            roomVolumeInput.disabled = false; // Enable the new volume input
+            roomVolumeInput.disabled = false;
 
             // Disable the input corresponding to the calculation mode
             if (mode === 'ach') {
@@ -155,15 +148,15 @@
         }
 
         /**
-         * Handles the calculation when the button is clicked.
+         * Performs the calculation based on the current input values and selected mode.
          */
-        calculateBtn.addEventListener('click', () => {
+        function performCalculation() {
             hideMessages(); // Clear previous messages
 
             const mode = calculationModeSelect.value;
             const cfm = parseFloat(cfmInput.value);
             const ach = parseFloat(achInput.value);
-            const roomVolume = parseFloat(roomVolumeInput.value); // Get value from single room volume input
+            const roomVolume = parseFloat(roomVolumeInput.value);
 
             let calculatedValue;
             let unit;
@@ -171,40 +164,31 @@
             switch (mode) {
                 case 'ach':
                     // Calculate ACH: ACH = (CFM * 60) / Room Volume
-                    if (isNaN(cfm) || cfm <= 0) {
-                        displayError('Please enter a valid positive number for CFM.');
-                        return;
+                    if (cfmInput.value === '' || isNaN(cfm) || roomVolumeInput.value === '' || isNaN(roomVolume)) {
+                        return; // Don't calculate if inputs are empty or not numbers
                     }
-                    if (isNaN(roomVolume) || roomVolume <= 0) {
-                        displayError('Please enter a valid positive number for Room Volume.');
-                        return;
-                    }
+                    if (cfm <= 0) { displayError('CFM must be a positive number.'); return; }
+                    if (roomVolume <= 0) { displayError('Room Volume must be a positive number.'); return; }
                     calculatedValue = (cfm * 60) / roomVolume;
                     unit = 'ACH';
                     break;
                 case 'cfm':
                     // Calculate CFM: CFM = (ACH * Room Volume) / 60
-                    if (isNaN(ach) || ach <= 0) {
-                        displayError('Please enter a valid positive number for ACH.');
-                        return;
+                    if (achInput.value === '' || isNaN(ach) || roomVolumeInput.value === '' || isNaN(roomVolume)) {
+                        return; // Don't calculate if inputs are empty or not numbers
                     }
-                    if (isNaN(roomVolume) || roomVolume <= 0) {
-                        displayError('Please enter a valid positive number for Room Volume.');
-                        return;
-                    }
+                    if (ach <= 0) { displayError('ACH must be a positive number.'); return; }
+                    if (roomVolume <= 0) { displayError('Room Volume must be a positive number.'); return; }
                     calculatedValue = (ach * roomVolume) / 60;
                     unit = 'CFM';
                     break;
                 case 'volume':
                     // Calculate Room Volume: Room Volume = (CFM * 60) / ACH
-                    if (isNaN(cfm) || cfm <= 0) {
-                        displayError('Please enter a valid positive number for CFM.');
-                        return;
+                    if (cfmInput.value === '' || isNaN(cfm) || achInput.value === '' || isNaN(ach)) {
+                        return; // Don't calculate if inputs are empty or not numbers
                     }
-                    if (isNaN(ach) || ach <= 0) {
-                        displayError('Please enter a valid positive number for ACH.');
-                        return;
-                    }
+                    if (cfm <= 0) { displayError('CFM must be a positive number.'); return; }
+                    if (ach <= 0) { displayError('ACH must be a positive number.'); return; }
                     calculatedValue = (cfm * 60) / ach;
                     unit = 'Cubic Feet';
                     break;
@@ -214,13 +198,25 @@
             }
 
             displayResult(calculatedValue, unit);
-        });
+        }
 
-        // Event listener for mode change
-        calculationModeSelect.addEventListener('change', updateInputStates);
+        /**
+         * Calls updateInputStates and then performs the calculation.
+         * Used for events that change the mode or might affect which inputs are active.
+         */
+        function updateInputStatesAndPerformCalculation() {
+            updateInputStates();
+            performCalculation();
+        }
 
-        // Initial update of input states when the page loads
-        updateInputStates();
+        // Event listeners for real-time updates
+        calculationModeSelect.addEventListener('change', updateInputStatesAndPerformCalculation);
+        cfmInput.addEventListener('input', performCalculation);
+        achInput.addEventListener('input', performCalculation);
+        roomVolumeInput.addEventListener('input', performCalculation);
+
+        // Initial setup when the page loads
+        updateInputStatesAndPerformCalculation();
 
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
