@@ -53,27 +53,7 @@
             border-color: #6366f1; /* Purple focus border */
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Soft focus shadow */
         }
-        button {
-            width: 100%;
-            padding: 0.85rem 1.5rem; /* Larger button */
-            background-color: #6366f1; /* Purple button */
-            color: white;
-            border: none;
-            border-radius: 0.75rem; /* Rounded button */
-            font-size: 1.125rem; /* Larger font */
-            font-weight: 700; /* Bold font */
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Button shadow */
-        }
-        button:hover {
-            background-color: #4f46e5; /* Darker purple on hover */
-            transform: translateY(-1px); /* Slight lift effect */
-        }
-        button:active {
-            transform: translateY(0); /* Press down effect */
-            box-shadow: none;
-        }
+        /* Removed button styling as the button is no longer present */
         .result-box {
             background-color: #e0f2fe; /* Light blue for results */
             border: 1px solid #90cdf4; /* Blue border */
@@ -91,21 +71,7 @@
             margin-top: 0.5rem;
             text-align: center;
         }
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-left: 0.5rem;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        /* Removed loading spinner styling as it's no longer used */
         .flex-row {
             display: flex;
             gap: 1rem; /* Spacing between side-by-side inputs */
@@ -116,8 +82,8 @@
     </style>
     <link rel="manifest" href="manifest.json">
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+<body>
+    <div class="container">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Duct Flow Calculator</h1>
 
         <div class="input-group">
@@ -199,10 +165,7 @@
             </div>
         </div>
 
-        <button id="calculateBtn" class="flex items-center justify-center">
-            Calculate Flow
-            <span id="loadingSpinner" class="loading-spinner hidden"></span>
-        </button>
+        <!-- Removed the Calculate Flow button -->
 
         <div id="result" class="result-box hidden">
             Flow Rate: <span id="flowRateValue"></span> <span id="flowRateUnit"></span>
@@ -214,10 +177,9 @@
         // Register service worker for PWA capabilities
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Changed service worker registration path to './sw.js' for better compatibility
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
-                        // console.log('Service Worker registered with scope:', registration.scope); // Removed console.log
+                        // Service Worker registered successfully
                     })
                     .catch(error => {
                         console.error('Service Worker registration failed:', error);
@@ -228,8 +190,6 @@
         const ductShapeSelect = document.getElementById('ductShape');
         const rectangularInputs = document.getElementById('rectangularInputs');
         const circularInputs = document.getElementById('circularInputs');
-        const calculateBtn = document.getElementById('calculateBtn');
-        const loadingSpinner = document.getElementById('loadingSpinner');
         const resultDiv = document.getElementById('result');
         const flowRateValueSpan = document.getElementById('flowRateValue');
         const flowRateUnitSpan = document.getElementById('flowRateUnit');
@@ -244,6 +204,7 @@
                 rectangularInputs.classList.add('hidden');
                 circularInputs.classList.remove('hidden');
             }
+            performCalculationIfReady(); // Trigger calculation when shape changes
         }
 
         // Event listener for duct shape change
@@ -285,8 +246,7 @@
             if (CONVERSION_FACTORS[type] && CONVERSION_FACTORS[type][unit]) {
                 return value * CONVERSION_FACTORS[type][unit];
             }
-            // console.error(`Unknown unit or type for conversion: ${unit}, ${type}`); // Removed console.error
-            return value; // Return original value if unit/type not found (shouldn't happen with defined units)
+            return value; // Return original value if unit/type not found
         }
 
         /**
@@ -311,103 +271,98 @@
             return isValid;
         }
 
-        // Event listener for the calculate button
-        calculateBtn.addEventListener('click', () => {
-            resultDiv.classList.add('hidden');
-            errorMessageDiv.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
-            calculateBtn.disabled = true;
+        /**
+         * Triggers the flow calculation if all necessary inputs are filled and valid.
+         */
+        function performCalculationIfReady() {
+            resultDiv.classList.add('hidden'); // Hide previous result
+            errorMessageDiv.classList.add('hidden'); // Hide previous error
 
-            // Use a small delay to show the loading spinner before calculation
-            setTimeout(() => {
-                try {
-                    let areaSI; // Area in square meters
-                    let pressureSI; // Pressure in Pascals
+            let inputsToValidate = [];
+            const pressureInput = document.getElementById('pressure');
+            inputsToValidate.push({ element: pressureInput, name: 'Pressure' });
 
-                    // Get pressure input and convert to SI
-                    const pressureInput = document.getElementById('pressure');
-                    const pressureUnit = document.getElementById('pressureUnit').value;
-                    const pressureValue = parseFloat(pressureInput.value);
+            if (ductShapeSelect.value === 'rectangular') {
+                const widthInput = document.getElementById('width');
+                const heightInput = document.getElementById('height');
+                inputsToValidate.push(
+                    { element: widthInput, name: 'Width' },
+                    { element: heightInput, name: 'Height' }
+                );
+            } else { // Circular duct
+                const diameterInput = document.getElementById('diameter');
+                inputsToValidate.push({ element: diameterInput, name: 'Diameter' });
+            }
 
-                    const inputsToValidate = [{ element: pressureInput, name: 'Pressure' }];
+            if (!validateInputs(inputsToValidate)) {
+                // If inputs are not valid, just return. Error message is set by validateInputs.
+                return;
+            }
 
-                    if (ductShapeSelect.value === 'rectangular') {
-                        const widthInput = document.getElementById('width');
-                        const widthUnit = document.getElementById('widthUnit').value;
-                        const heightInput = document.getElementById('height');
-                        const heightUnit = document.getElementById('heightUnit').value;
+            // All inputs are valid, proceed with calculation
+            try {
+                let areaSI; // Area in square meters
+                let pressureSI; // Pressure in Pascals
 
-                        inputsToValidate.push(
-                            { element: widthInput, name: 'Width' },
-                            { element: heightInput, name: 'Height' }
-                        );
+                const pressureUnit = document.getElementById('pressureUnit').value;
+                const pressureValue = parseFloat(pressureInput.value);
+                pressureSI = convertToSI(pressureValue, pressureUnit, 'pressure');
 
-                        if (!validateInputs(inputsToValidate)) {
-                            loadingSpinner.classList.add('hidden');
-                            calculateBtn.disabled = false;
-                            return;
-                        }
+                if (ductShapeSelect.value === 'rectangular') {
+                    const widthInput = document.getElementById('width');
+                    const widthUnit = document.getElementById('widthUnit').value;
+                    const heightInput = document.getElementById('height');
+                    const heightUnit = document.getElementById('heightUnit').value;
 
-                        const widthSI = convertToSI(parseFloat(widthInput.value), widthUnit, 'length');
-                        const heightSI = convertToSI(parseFloat(heightInput.value), heightUnit, 'length');
-                        areaSI = widthSI * heightSI;
-                    } else { // Circular duct
-                        const diameterInput = document.getElementById('diameter');
-                        const diameterUnit = document.getElementById('diameterUnit').value;
+                    const widthSI = convertToSI(parseFloat(widthInput.value), widthUnit, 'length');
+                    const heightSI = convertToSI(parseFloat(heightInput.value), heightUnit, 'length');
+                    areaSI = widthSI * heightSI;
+                } else { // Circular duct
+                    const diameterInput = document.getElementById('diameter');
+                    const diameterUnit = document.getElementById('diameterUnit').value;
 
-                        inputsToValidate.push({ element: diameterInput, name: 'Diameter' });
-
-                        if (!validateInputs(inputsToValidate)) {
-                            loadingSpinner.classList.add('hidden');
-                            calculateBtn.disabled = false;
-                            return;
-                        }
-
-                        const diameterSI = convertToSI(parseFloat(diameterInput.value), diameterUnit, 'length');
-                        const radiusSI = diameterSI / 2;
-                        areaSI = Math.PI * Math.pow(radiusSI, 2);
-                    }
-
-                    // Validate pressure after duct dimensions
-                    if (!validateInputs(inputsToValidate)) {
-                        loadingSpinner.classList.add('hidden');
-                        calculateBtn.disabled = false;
-                        return;
-                    }
-                    pressureSI = convertToSI(pressureValue, pressureUnit, 'pressure');
-
-                    // Ensure pressure is non-negative for sqrt
-                    if (pressureSI < 0) {
-                        errorMessageDiv.textContent = 'Pressure cannot be negative for this calculation.';
-                        errorMessageDiv.classList.remove('hidden');
-                        loadingSpinner.classList.add('hidden');
-                        calculateBtn.disabled = false;
-                        return;
-                    }
-
-                    // Calculate velocity (v = sqrt(2 * Pv / rho))
-                    const velocitySI = Math.sqrt((2 * pressureSI) / AIR_DENSITY);
-
-                    // Calculate flow rate (Q = A * v)
-                    const flowRateM3s = areaSI * velocitySI;
-
-                    // Convert to CFM for display
-                    const flowRateCFM = flowRateM3s * CONVERSION_FACTORS.flow['m3/s_to_cfm'];
-
-                    flowRateValueSpan.textContent = flowRateCFM.toFixed(2);
-                    flowRateUnitSpan.textContent = 'CFM';
-                    resultDiv.classList.remove('hidden');
-
-                } catch (error) {
-                    console.error('Calculation error:', error);
-                    errorMessageDiv.textContent = 'An error occurred during calculation. Please check your inputs.';
-                    errorMessageDiv.classList.remove('hidden');
-                } finally {
-                    loadingSpinner.classList.add('hidden');
-                    calculateBtn.disabled = false;
+                    const diameterSI = convertToSI(parseFloat(diameterInput.value), diameterUnit, 'length');
+                    const radiusSI = diameterSI / 2;
+                    areaSI = Math.PI * Math.pow(radiusSI, 2);
                 }
-            }, 100); // Short delay
-        });
+
+                // Ensure pressure is non-negative for sqrt
+                if (pressureSI < 0) {
+                    errorMessageDiv.textContent = 'Pressure cannot be negative for this calculation.';
+                    errorMessageDiv.classList.remove('hidden');
+                    return;
+                }
+
+                // Calculate velocity (v = sqrt(2 * Pv / rho))
+                const velocitySI = Math.sqrt((2 * pressureSI) / AIR_DENSITY);
+
+                // Calculate flow rate (Q = A * v)
+                const flowRateM3s = areaSI * velocitySI;
+
+                // Convert to CFM for display
+                const flowRateCFM = flowRateM3s * CONVERSION_FACTORS.flow['m3/s_to_cfm'];
+
+                flowRateValueSpan.textContent = flowRateCFM.toFixed(2);
+                flowRateUnitSpan.textContent = 'CFM';
+                resultDiv.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Calculation error:', error);
+                errorMessageDiv.textContent = 'An error occurred during calculation. Please check your inputs.';
+                errorMessageDiv.classList.remove('hidden');
+            }
+        }
+
+        // Attach event listeners to all relevant inputs and selects to trigger calculation
+        document.getElementById('width').addEventListener('input', performCalculationIfReady);
+        document.getElementById('widthUnit').addEventListener('change', performCalculationIfReady);
+        document.getElementById('height').addEventListener('input', performCalculationIfReady);
+        document.getElementById('heightUnit').addEventListener('change', performCalculationIfReady);
+        document.getElementById('diameter').addEventListener('input', performCalculationIfReady);
+        document.getElementById('diameterUnit').addEventListener('change', performCalculationIfReady);
+        document.getElementById('pressure').addEventListener('input', performCalculationIfReady);
+        document.getElementById('pressureUnit').addEventListener('change', performCalculationIfReady);
+        // The ductShapeSelect's change listener already calls performCalculationIfReady via toggleDuctInputs
     </script>
 </body>
 </html>
