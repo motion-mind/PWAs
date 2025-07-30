@@ -1,0 +1,9 @@
+{
+    "name": "Duct Flow Calculator",
+    "short_name": "DuctFlow",
+    "description": "Calculate duct airflow based on size and pressure.",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#f0f4f8",
+    "theme_color": "#6366f1"
+}
