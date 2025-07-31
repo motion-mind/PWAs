@@ -3,197 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motor Pulley & Belt Size Calculator</title>
+    <title>Belt & Pulley Calculator</title>
     <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #343a40;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
             margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
             padding: 20px;
+            box-sizing: border-box;
         }
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-background);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
-        h1, h2, h3 {
-            color: #2c3e50;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
-            margin-top: 20px;
+        header h1 {
+            font-size: 1.75em;
+            color: var(--secondary-color);
+            text-align: center;
+            margin: 0 0 25px 0;
         }
-        h1 {
-            font-size: 2em;
+        .input-group {
+            margin-bottom: 18px;
         }
-        h2 {
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #results {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        #results.hidden {
+            display: none;
+        }
+        #results h2 {
             font-size: 1.5em;
+            margin: 0 0 15px 0;
+            text-align: center;
         }
-        h3 {
-            font-size: 1.2em;
-            border-bottom: 1px solid #eee;
-        }
-        hr {
-            border: 0;
-            height: 1px;
-            background: #ddd;
-            margin: 40px 0;
-        }
-        pre {
-            background-color: #2d2d2d;
-            color: #f2f2f2;
-            padding: 20px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-size: 0.9em;
-        }
-        code {
-            font-family: "Courier New", Courier, monospace;
-        }
-        ul {
-            list-style-type: disc;
-            padding-left: 20px;
-        }
-        li {
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background-color: #f1f3f5;
+            border-radius: 6px;
             margin-bottom: 10px;
         }
-        strong {
-            color: #34495e;
+        .result-item span {
+            color: #495057;
         }
-        .formula {
-            font-family: "Times New Roman", Times, serif;
+        .result-item strong {
+            color: var(--primary-color);
             font-size: 1.1em;
-            background-color: #ecf0f1;
-            padding: 10px;
-            border-radius: 4px;
-            display: inline-block;
+        }
+        .note {
+            font-size: 0.9em;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-
-        <h1>Motor Pulley & Belt Sizing</h1>
-        <p>This guide provides the necessary formulas and a Python code-based calculator to find the driven pulley diameter, required belt length, and resulting belt speed for a motor application.</p>
-
-        <hr>
-
-        <h2>The Formulas</h2>
-        <p>The calculations rely on a few key formulas to determine the relationships between speed, diameters, and lengths in a two-pulley system.</p>
-        <ul>
-            <li><strong>Speed Ratio:</strong> The ratio between the motor (drive) pulley and the driven pulley determines the final speed of the driven shaft.
-                <br>
-                <span class="formula">Ratio = Motor RPM / Desired Driven RPM</span>
-            </li>
-            <li><strong>Driven Pulley Diameter (D<sub>2</sub>):</strong> This formula calculates the required size of the driven pulley to achieve the desired RPM.
-                <br>
-                <span class="formula">D<sub>2</sub> = D<sub>1</sub> &times; Ratio</span>
-                <br>
-                Where D<sub>1</sub> is the diameter of the motor pulley.
-            </li>
-            <li><strong>Belt Length (L):</strong> This formula provides an approximate length for a standard V-belt based on the pulley diameters and the distance between their centers.
-                <br>
-                <span class="formula">L &approx; 2C + (&pi;(D<sub>2</sub> + D<sub>1</sub>))/2 + (D<sub>2</sub> - D<sub>1</sub>)<sup>2</sup> / 4C</span>
-                <br>
-                Where C is the center-to-center distance between the two pulleys.
-            </li>
-            <li><strong>Belt Speed (V):</strong> This calculates how fast the belt travels in feet per minute (FPM), which is useful for ensuring it's within the belt's operational limits.
-                <br>
-                <span class="formula">V (FPM) = (Motor RPM &times; &pi; &times; D<sub>1</sub>) / 12</span>
-            </li>
-        </ul>
-
-        <hr>
-
-        <h2>Pulley & Belt Calculator ⚙️</h2>
-        <p>You can use the following Python code to perform the calculations. Simply copy the code into a Python environment and change the values in the "User Inputs" section to match your project.</p>
+        <header>
+            <h1>Belt & Pulley Calculator ⚙️</h1>
+        </header>
         
-        <pre><code>
-import math
+        <form id="calculator-form">
+            <div class="input-group">
+                <label for="motor-rpm">Motor RPM</label>
+                <input type="number" id="motor-rpm" value="1750" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="driven-rpm">Desired Driven RPM</label>
+                <input type="number" id="driven-rpm" value="750" required>
+            </div>
 
-def pulley_belt_calculator():
-    # --- User Inputs (Change these values) ---
+            <div class="input-group">
+                <label for="motor-pulley">Motor Pulley Diameter (inches)</label>
+                <input type="number" id="motor-pulley" value="4" step="0.1" required>
+            </div>
 
-    # Speed information in Revolutions Per Minute (RPM)
-    motor_rpm = 1750
-    desired_driven_rpm = 750
-
-    # Known pulley diameter in inches (typically the motor pulley)
-    motor_pulley_diameter = 4.0 # inches
-
-    # Center-to-center distance between the two pulleys in inches
-    center_distance = 18.0 # inches
-
-
-    # --- Calculations ---
-
-    # 1. Calculate the speed ratio
-    if desired_driven_rpm > 0:
-        speed_ratio = motor_rpm / desired_driven_rpm
-    else:
-        print("Error: Desired Driven RPM cannot be zero.")
-        return
-
-    # 2. Calculate the driven pulley diameter
-    driven_pulley_diameter = motor_pulley_diameter * speed_ratio
-
-    # 3. Calculate the belt length
-    # L = 2C + 1.57(D2 + D1) + (D2 - D1)^2 / 4C
-    term1 = 2 * center_distance
-    term2 = (math.pi * (driven_pulley_diameter + motor_pulley_diameter)) / 2
-    term3 = (driven_pulley_diameter - motor_pulley_diameter)**2 / (4 * center_distance)
-    belt_length = term1 + term2 + term3
-
-    # 4. Calculate the belt speed in feet per minute (FPM)
-    belt_speed_fpm = (motor_rpm * math.pi * motor_pulley_diameter) / 12
-
-
-    # --- Results ---
-
-    print("--- Pulley & Belt Calculation Results ---")
-    print(f"Speed Ratio: {speed_ratio:.2f}:1")
-    print(f"Required Driven Pulley Diameter: {driven_pulley_diameter:.2f} inches")
-    print(f"Calculated Belt Length: {belt_length:.2f} inches")
-    print(f"Belt Speed: {belt_speed_fpm:.0f} FPM")
-    print("\nNote: Choose standard, commercially available pulley and belt sizes that are closest to these calculated values.")
-
-
-# Run the calculator
-pulley_belt_calculator()
-        </code></pre>
-
-        <h3>Example Calculation</h3>
-        <p>Using the default values in the code above:</p>
-        <ul>
-            <li><strong>Motor RPM:</strong> 1750</li>
-            <li><strong>Desired RPM:</strong> 750</li>
-            <li><strong>Motor Pulley Diameter:</strong> 4 inches</li>
-            <li><strong>Center Distance:</strong> 18 inches</li>
-        </ul>
-        <p>The calculator would output:</p>
-        <ul>
-            <li><strong>Required Driven Pulley Diameter:</strong> 9.33 inches</li>
-            <li><strong>Calculated Belt Length:</strong> 57.53 inches</li>
-            <li><strong>Belt Speed:</strong> 1833 FPM</li>
-        </ul>
-        <p>You would then look for a standard driven pulley close to 9.33 inches and a standard belt close to 57.5 inches.</p>
-
-        <hr>
+            <div class="input-group">
+                <label for="center-distance">Center Distance (inches)</label>
+                <input type="number" id="center-distance" value="18" step="0.1" required>
+            </div>
+            
+            <button type="submit">Calculate</button>
+        </form>
         
-        <h2>Important Considerations</h2>
-        <ul>
-            <li><strong>Standard Sizes:</strong> Pulleys and belts come in standard sizes. Always select the closest available commercial size to your calculated values. Changing the pulley size will slightly alter your final driven RPM.</li>
-            <li><strong>Belt Tension:</strong> The calculated belt length is theoretical. Most systems have a tensioning mechanism (like a sliding motor mount) to achieve the proper belt tension upon installation.</li>
-            <li><strong>System Inefficiency:</strong> Expect a small amount of speed loss (typically 1-2%) due to belt slippage. The actual driven RPM may be slightly lower than calculated.</li>
-            <li><strong>Belt Type:</strong> The calculations are for standard V-belt systems. Different belt types (e.g., synchronous or timing belts) may have different sizing considerations.</li>
-        </ul>
-
+        <div id="results" class="hidden">
+            <h2>Results</h2>
+            <div class="result-item">
+                <span>Speed Ratio</span>
+                <strong id="result-ratio"></strong>
+            </div>
+            <div class="result-item">
+                <span>Driven Pulley Diameter</span>
+                <strong id="result-driven-pulley"></strong>
+            </div>
+            <div class="result-item">
+                <span>Approx. Belt Length</span>
+                <strong id="result-belt-length"></strong>
+            </div>
+            <div class="result-item">
+                <span>Belt Speed (FPM)</span>
+                <strong id="result-belt-speed"></strong>
+            </div>
+             <p class="note">Choose standard, commercially available sizes closest to these calculated values.</p>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('calculator-form');
+            const resultsDiv = document.getElementById('results');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent form from reloading the page
+
+                // Get values from input fields
+                const motorRpm = parseFloat(document.getElementById('motor-rpm').value);
+                const drivenRpm = parseFloat(document.getElementById('driven-rpm').value);
+                const motorPulley = parseFloat(document.getElementById('motor-pulley').value);
+                const centerDistance = parseFloat(document.getElementById('center-distance').value);
+
+                // Validate inputs
+                if (isNaN(motorRpm) || isNaN(drivenRpm) || isNaN(motorPulley) || isNaN(centerDistance) || drivenRpm <= 0) {
+                    alert('Please enter valid numbers. Driven RPM must be greater than zero.');
+                    return;
+                }
+
+                // --- Calculations ---
+                const speedRatio = motorRpm / drivenRpm;
+                const drivenPulleyDiameter = motorPulley * speedRatio;
+                
+                const term1 = 2 * centerDistance;
+                const term2 = (Math.PI * (drivenPulleyDiameter + motorPulley)) / 2;
+                const term3 = Math.pow(drivenPulleyDiameter - motorPulley, 2) / (4 * centerDistance);
+                const beltLength = term1 + term2 + term3;
+
+                const beltSpeed = (motorRpm * Math.PI * motorPulley) / 12;
+
+                // --- Display Results ---
+                document.getElementById('result-ratio').textContent = `${speedRatio.toFixed(2)} : 1`;
+                document.getElementById('result-driven-pulley').textContent = `${drivenPulleyDiameter.toFixed(2)} in`;
+                document.getElementById('result-belt-length').textContent = `${beltLength.toFixed(2)} in`;
+                document.getElementById('result-belt-speed').textContent = `${beltSpeed.toFixed(0)} FPM`;
+
+                resultsDiv.classList.remove('hidden');
+            });
+        });
+    </script>
 
 </body>
 </html>
