@@ -86,8 +86,9 @@
         .result-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 12px;
-            background-color: #f1f3f5;
+            background-color: #ffffff;
             border-radius: 6px;
             margin-bottom: 10px;
         }
@@ -98,11 +99,23 @@
             color: var(--primary-color);
             font-size: 1.1em;
         }
+        .result-item-group {
+            background-color: #f1f3f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .result-item-group h4 {
+            margin: 0 0 12px 0;
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 1.1em;
+        }
         .note {
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #6c757d;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -147,15 +160,23 @@
                 <span>Driven Pulley Diameter</span>
                 <strong id="result-driven-pulley"></strong>
             </div>
-            <div class="result-item">
-                <span>Approx. Belt Length</span>
-                <strong id="result-belt-length"></strong>
-            </div>
-            <div class="result-item">
-                <span>Belt Speed (FPM)</span>
+             <div class="result-item">
+                <span>Belt Speed</span>
                 <strong id="result-belt-speed"></strong>
             </div>
-             <p class="note">Choose standard, commercially available sizes closest to these calculated values.</p>
+            
+            <div class="result-item-group">
+                <h4>Suggested Belt Sizes</h4>
+                <div class="result-item">
+                    <span>A-Series (4L)</span>
+                    <strong id="result-belt-a"></strong>
+                </div>
+                <div class="result-item">
+                    <span>B-Series (5L)</span>
+                    <strong id="result-belt-b"></strong>
+                </div>
+                <p class="note">Your system's tensioning adjustment will determine the best fit.</p>
+            </div>
         </div>
     </div>
 
@@ -190,12 +211,18 @@
 
                 const beltSpeed = (motorRpm * Math.PI * motorPulley) / 12;
 
+                // --- Convert to Standard Belt Sizes ---
+                const closestSize = Math.round(beltLength);
+                const aSeriesSize = `A${closestSize} or 4L${closestSize}0`;
+                const bSeriesSize = `B${closestSize} or 5L${closestSize}0`;
+
                 // --- Display Results ---
                 document.getElementById('result-ratio').textContent = `${speedRatio.toFixed(2)} : 1`;
                 document.getElementById('result-driven-pulley').textContent = `${drivenPulleyDiameter.toFixed(2)} in`;
-                document.getElementById('result-belt-length').textContent = `${beltLength.toFixed(2)} in`;
                 document.getElementById('result-belt-speed').textContent = `${beltSpeed.toFixed(0)} FPM`;
-
+                document.getElementById('result-belt-a').textContent = aSeriesSize;
+                document.getElementById('result-belt-b').textContent = bSeriesSize;
+                
                 resultsDiv.classList.remove('hidden');
             });
         });
