@@ -6,7 +6,7 @@
     <title>Belt & Pulley Calculator</title>
     <style>
         :root {
-            --primary-color: #007bff;
+            --primary-color: #28a745;
             --secondary-color: #343a40;
             --background-color: #f8f9fa;
             --card-background: #ffffff;
@@ -68,7 +68,7 @@
             transition: background-color 0.2s;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
         #results {
             margin-top: 25px;
@@ -133,13 +133,13 @@
             </div>
             
             <div class="input-group">
-                <label for="driven-rpm">Desired Driven RPM</label>
-                <input type="number" id="driven-rpm" value="750" required>
+                <label for="motor-pulley">Motor Pulley Diameter (inches)</label>
+                <input type="number" id="motor-pulley" value="4" step="0.1" required>
             </div>
 
             <div class="input-group">
-                <label for="motor-pulley">Motor Pulley Diameter (inches)</label>
-                <input type="number" id="motor-pulley" value="4" step="0.1" required>
+                <label for="driven-pulley">Driven Pulley Diameter (inches)</label>
+                <input type="number" id="driven-pulley" value="8" step="0.1" required>
             </div>
 
             <div class="input-group">
@@ -153,12 +153,12 @@
         <div id="results" class="hidden">
             <h2>Results</h2>
             <div class="result-item">
-                <span>Speed Ratio</span>
-                <strong id="result-ratio"></strong>
+                <span>Resulting Driven RPM</span>
+                <strong id="result-driven-rpm"></strong>
             </div>
             <div class="result-item">
-                <span>Driven Pulley Diameter</span>
-                <strong id="result-driven-pulley"></strong>
+                <span>Speed Ratio</span>
+                <strong id="result-ratio"></strong>
             </div>
              <div class="result-item">
                 <span>Belt Speed</span>
@@ -186,27 +186,27 @@
             const resultsDiv = document.getElementById('results');
 
             form.addEventListener('submit', (e) => {
-                e.preventDefault(); // Prevent form from reloading the page
+                e.preventDefault();
 
                 // Get values from input fields
                 const motorRpm = parseFloat(document.getElementById('motor-rpm').value);
-                const drivenRpm = parseFloat(document.getElementById('driven-rpm').value);
                 const motorPulley = parseFloat(document.getElementById('motor-pulley').value);
+                const drivenPulley = parseFloat(document.getElementById('driven-pulley').value);
                 const centerDistance = parseFloat(document.getElementById('center-distance').value);
 
                 // Validate inputs
-                if (isNaN(motorRpm) || isNaN(drivenRpm) || isNaN(motorPulley) || isNaN(centerDistance) || drivenRpm <= 0) {
-                    alert('Please enter valid numbers. Driven RPM must be greater than zero.');
+                if (isNaN(motorRpm) || isNaN(motorPulley) || isNaN(drivenPulley) || isNaN(centerDistance) || motorPulley <= 0 || drivenPulley <= 0) {
+                    alert('Please enter valid, positive numbers for all fields.');
                     return;
                 }
 
                 // --- Calculations ---
-                const speedRatio = motorRpm / drivenRpm;
-                const drivenPulleyDiameter = motorPulley * speedRatio;
+                const speedRatio = drivenPulley / motorPulley;
+                const drivenRpm = motorRpm / speedRatio;
                 
                 const term1 = 2 * centerDistance;
-                const term2 = (Math.PI * (drivenPulleyDiameter + motorPulley)) / 2;
-                const term3 = Math.pow(drivenPulleyDiameter - motorPulley, 2) / (4 * centerDistance);
+                const term2 = (Math.PI * (drivenPulley + motorPulley)) / 2;
+                const term3 = Math.pow(drivenPulley - motorPulley, 2) / (4 * centerDistance);
                 const beltLength = term1 + term2 + term3;
 
                 const beltSpeed = (motorRpm * Math.PI * motorPulley) / 12;
@@ -217,8 +217,8 @@
                 const bSeriesSize = `B${closestSize} or 5L${closestSize}0`;
 
                 // --- Display Results ---
+                document.getElementById('result-driven-rpm').textContent = `${drivenRpm.toFixed(0)} RPM`;
                 document.getElementById('result-ratio').textContent = `${speedRatio.toFixed(2)} : 1`;
-                document.getElementById('result-driven-pulley').textContent = `${drivenPulleyDiameter.toFixed(2)} in`;
                 document.getElementById('result-belt-speed').textContent = `${beltSpeed.toFixed(0)} FPM`;
                 document.getElementById('result-belt-a').textContent = aSeriesSize;
                 document.getElementById('result-belt-b').textContent = bSeriesSize;
