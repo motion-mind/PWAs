@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Duct Sizing Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean look */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-200 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-200">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Air Duct Sizing Calculator</h1>
+
+        <!-- Duct Type Selection -->
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-semibold mb-2">Duct Type:</label>
+            <div class="flex space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" name="ductType" value="rectangular" checked
+                           class="form-radio text-blue-600 h-4 w-4">
+                    <span class="ml-2 text-gray-700">Rectangular Duct</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" name="ductType" value="round"
+                           class="form-radio text-blue-600 h-4 w-4">
+                    <span class="ml-2 text-gray-700">Round Duct</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Rectangular Duct Inputs -->
+        <div id="rectangularInputs">
+            <div class="mb-5">
+                <label for="ductWidth" class="block text-gray-700 text-sm font-semibold mb-2">Duct Width (inches):</label>
+                <input type="number" id="ductWidth" placeholder="e.g., 12"
+                       class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                       min="0" step="any">
+            </div>
+
+            <div class="mb-6">
+                <label for="ductHeight" class="block text-gray-700 text-sm font-semibold mb-2">Duct Height (inches):</label>
+                <input type="number" id="ductHeight" placeholder="e.g., 8"
+                       class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                       min="0" step="any">
+            </div>
+        </div>
+
+        <!-- Round Duct Input (initially hidden) -->
+        <div id="roundInputs" class="hidden">
+            <div class="mb-6">
+                <label for="ductDiameter" class="block text-gray-700 text-sm font-semibold mb-2">Duct Diameter (inches):</label>
+                <input type="number" id="ductDiameter" placeholder="e.g., 10"
+                       class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out"
+                       min="0" step="any">
+            </div>
+        </div>
+
+        <button id="calculateBtn"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
+            Calculate Square Feet
+        </button>
+
+        <div id="resultContainer" class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200 text-center hidden">
+            <p class="text-gray-700 text-lg font-medium">Calculated Surface Area:</p>
+            <p id="result" class="text-blue-800 text-4xl font-extrabold mt-2"></p>
+            <p class="text-gray-600 text-sm mt-1">square feet</p>
+        </div>
+
+        <div id="messageBox" class="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg hidden" role="alert">
+            <p id="messageText"></p>
+        </div>
+    </div>
+
+    <script>
+        // Get references to elements
+        const ductTypeRadios = document.querySelectorAll('input[name="ductType"]');
+        const rectangularInputsDiv = document.getElementById('rectangularInputs');
+        const roundInputsDiv = document.getElementById('roundInputs');
+        const ductWidthInput = document.getElementById('ductWidth');
+        const ductHeightInput = document.getElementById('ductHeight');
+        const ductDiameterInput = document.getElementById('ductDiameter');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultDisplay = document.getElementById('result');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+
+        /**
+         * Displays a message in the message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('error' or 'info').
+         */
+        function showMessage(message, type = 'error') {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden');
+            if (type === 'error') {
+                messageBox.classList.remove('bg-green-100', 'border-green-400', 'text-green-700');
+                messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700');
+            } else {
+                messageBox.classList.remove('bg-red-100', 'border-red-400', 'text-green-700');
+                messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
+            }
+            // Hide the message after 5 seconds
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000);
+        }
+
+        /**
+         * Hides the message box.
+         */
+        function hideMessage() {
+            messageBox.classList.add('hidden');
+        }
+
+        /**
+         * Toggles the visibility of input fields based on selected duct type.
+         */
+        function toggleDuctInputs() {
+            const selectedType = document.querySelector('input[name="ductType"]:checked').value;
+            if (selectedType === 'rectangular') {
+                rectangularInputsDiv.classList.remove('hidden');
+                roundInputsDiv.classList.add('hidden');
+            } else {
+                rectangularInputsDiv.classList.add('hidden');
+                roundInputsDiv.classList.remove('hidden');
+            }
+            // Clear previous results and messages when changing duct type
+            resultContainer.classList.add('hidden');
+            hideMessage();
+        }
+
+        /**
+         * Calculates the square footage of the duct based on selected type.
+         */
+        function calculateDuctArea() {
+            hideMessage(); // Hide any previous messages
+            resultContainer.classList.add('hidden'); // Hide previous result
+
+            const selectedType = document.querySelector('input[name="ductType"]:checked').value;
+            let areaSquareInches = 0;
+            let isValid = true;
+
+            if (selectedType === 'rectangular') {
+                const width = parseFloat(ductWidthInput.value);
+                const height = parseFloat(ductHeightInput.value);
+
+                if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
+                    showMessage('Please enter valid positive numbers for both width and height.', 'error');
+                    isValid = false;
+                } else {
+                    areaSquareInches = width * height;
+                }
+            } else { // round duct
+                const diameter = parseFloat(ductDiameterInput.value);
+
+                if (isNaN(diameter) || diameter <= 0) {
+                    showMessage('Please enter a valid positive number for the diameter.', 'error');
+                    isValid = false;
+                } else {
+                    const radius = diameter / 2;
+                    areaSquareInches = Math.PI * radius * radius; // Area of a circle = pi * r^2
+                }
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Convert square inches to square feet (1 sq ft = 144 sq inches)
+            const areaSquareFeet = areaSquareInches / 144;
+
+            // Display the result formatted to 3 decimal places
+            resultDisplay.textContent = areaSquareFeet.toFixed(3);
+            resultContainer.classList.remove('hidden');
+        }
+
+        // Add event listeners
+        ductTypeRadios.forEach(radio => {
+            radio.addEventListener('change', toggleDuctInputs);
+        });
+        calculateBtn.addEventListener('click', calculateDuctArea);
+
+        // Optional: Allow calculation on 'Enter' key press in input fields
+        ductWidthInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calculateDuctArea();
+            }
+        });
+        ductHeightInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calculateDuctArea();
+            }
+        });
+        ductDiameterInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                calculateDuctArea();
+            }
+        });
+
+        // Initialize input visibility on page load
+        toggleDuctInputs();
+    </script>
+</body>
+</html>
