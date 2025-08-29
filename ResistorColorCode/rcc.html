@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resistor Color Code Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .resistor-body {
+            position: relative;
+            height: 60px;
+            width: 300px;
+            background-color: #f7e099;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px; /* Add gap between bands */
+        }
+
+        .resistor-lead {
+            width: 50px;
+            height: 4px;
+            background-color: #a0a0a0;
+        }
+        
+        .band-wrapper {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            gap: 12px;
+        }
+
+        .band {
+            width: 25px;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Resistor Color Code Calculator</h1>
+        <p class="text-center text-gray-500 mb-8">Select the colors to determine the resistance value.</p>
+        
+        <!-- Resistor Type Selector -->
+        <div class="mb-8">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Resistor Type</label>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <input id="resistor-type-4" name="resistor-type" type="radio" checked class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                    <label for="resistor-type-4" class="ml-2 block text-sm font-medium text-gray-700">4-Band</label>
+                </div>
+                <div class="flex items-center">
+                    <input id="resistor-type-5" name="resistor-type" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                    <label for="resistor-type-5" class="ml-2 block text-sm font-medium text-gray-700">5-Band</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resistor visual representation -->
+        <div class="flex flex-col items-center mb-10">
+            <div class="resistor-body relative flex items-center justify-center rounded-xl overflow-hidden">
+                <div class="resistor-lead absolute left-0 -ml-12 w-12 h-2 rounded-l-md bg-gray-500"></div>
+                
+                <div id="band1-visual" class="band w-8 h-full"></div>
+                <div id="band2-visual" class="band w-8 h-full"></div>
+                <div id="band3-visual" class="band w-8 h-full hidden"></div>
+                <div id="band4-visual" class="band w-8 h-full"></div>
+                <div id="band5-visual" class="band w-8 h-full"></div>
+                
+                <div class="resistor-lead absolute right-0 -mr-12 w-12 h-2 rounded-r-md bg-gray-500"></div>
+            </div>
+            <div class="text-center text-gray-600 mt-4">
+                <p id="result" class="text-2xl font-semibold"></p>
+                <p id="tolerance" class="text-lg"></p>
+            </div>
+        </div>
+
+        <!-- Selection controls -->
+        <div class="space-y-6">
+            <div>
+                <label for="band1-select" class="band-label block text-sm font-medium text-gray-700">Band 1 (First Digit)</label>
+                <select id="band1-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+            </div>
+            <div>
+                <label for="band2-select" class="band-label block text-sm font-medium text-gray-700">Band 2 (Second Digit)</label>
+                <select id="band2-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+            </div>
+            <div id="band3-container" class="hidden">
+                <label for="band3-select" class="band-label block text-sm font-medium text-gray-700">Band 3 (Third Digit)</label>
+                <select id="band3-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+            </div>
+            <div>
+                <label id="band4-label" for="band4-select" class="band-label block text-sm font-medium text-gray-700">Band 4 (Multiplier)</label>
+                <select id="band4-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+            </div>
+            <div>
+                <label id="band5-label" for="band5-select" class="band-label block text-sm font-medium text-gray-700">Band 5 (Tolerance)</label>
+                <select id="band5-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bandData = {
+            'black': { digit: 0, multiplier: 1, tolerance: null, color: '#000000' },
+            'brown': { digit: 1, multiplier: 10, tolerance: 1, color: '#964B00' },
+            'red': { digit: 2, multiplier: 100, tolerance: 2, color: '#FF0000' },
+            'orange': { digit: 3, multiplier: 1000, tolerance: null, color: '#FFA500' },
+            'yellow': { digit: 4, multiplier: 10000, tolerance: null, color: '#FFFF00' },
+            'green': { digit: 5, multiplier: 100000, tolerance: 0.5, color: '#008000' },
+            'blue': { digit: 6, multiplier: 1000000, tolerance: 0.25, color: '#0000FF' },
+            'violet': { digit: 7, multiplier: 10000000, tolerance: 0.1, color: '#8A2BE2' },
+            'gray': { digit: 8, multiplier: 100000000, tolerance: 0.05, color: '#808080' },
+            'white': { digit: 9, multiplier: 1000000000, tolerance: null, color: '#FFFFFF' },
+            'gold': { digit: null, multiplier: 0.1, tolerance: 5, color: '#FFD700' },
+            'silver': { digit: null, multiplier: 0.01, tolerance: 10, color: '#C0C0C0' }
+        };
+
+        const bandSelects = {
+            digit: ['band1-select', 'band2-select'],
+            fiveDigit: ['band3-select'],
+            multiplier: ['band4-select'],
+            tolerance: ['band5-select']
+        };
+
+        const radio4Band = document.getElementById('resistor-type-4');
+        const radio5Band = document.getElementById('resistor-type-5');
+        const band3Container = document.getElementById('band3-container');
+        const band3Visual = document.getElementById('band3-visual');
+        const band4Label = document.getElementById('band4-label');
+        const band5Label = document.getElementById('band5-label');
+        
+        const resultText = document.getElementById('result');
+        const toleranceText = document.getElementById('tolerance');
+
+        function populateSelect(selectId, type) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '';
+            let data;
+            let textFn;
+
+            if (type === 'digit') {
+                data = Object.entries(bandData).filter(([key, val]) => val.digit !== null);
+                textFn = ([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)} (${val.digit})`;
+            } else if (type === 'multiplier') {
+                data = Object.entries(bandData).filter(([key, val]) => val.multiplier !== null);
+                textFn = ([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)} (x${val.multiplier})`;
+            } else if (type === 'tolerance') {
+                data = Object.entries(bandData).filter(([key, val]) => val.tolerance !== null);
+                textFn = ([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)} (${val.tolerance}%)`;
+            }
+
+            data.forEach(([key, val]) => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = textFn([key, val]);
+                select.appendChild(option);
+            });
+        }
+
+        function switchResistorType() {
+            const isFiveBand = radio5Band.checked;
+            
+            if (isFiveBand) {
+                band3Container.classList.remove('hidden');
+                band3Visual.classList.remove('hidden');
+                band4Label.textContent = 'Band 4 (Multiplier)';
+                band5Label.textContent = 'Band 5 (Tolerance)';
+                populateSelect(bandSelects.fiveDigit[0], 'digit');
+                populateSelect(bandSelects.multiplier[0], 'multiplier');
+                populateSelect(bandSelects.tolerance[0], 'tolerance');
+
+            } else { // 4-band
+                band3Container.classList.add('hidden');
+                band3Visual.classList.add('hidden');
+                band4Label.textContent = 'Band 3 (Multiplier)';
+                band5Label.textContent = 'Band 4 (Tolerance)';
+                populateSelect(bandSelects.multiplier[0], 'multiplier');
+                populateSelect(bandSelects.tolerance[0], 'tolerance');
+            }
+            updateResistor();
+        }
+
+        function updateResistor() {
+            const isFiveBand = radio5Band.checked;
+
+            const band1Color = document.getElementById('band1-select').value;
+            const band2Color = document.getElementById('band2-select').value;
+            const band4Color = document.getElementById('band4-select').value;
+            const band5Color = document.getElementById('band5-select').value;
+
+            // Update visual bands
+            document.getElementById('band1-visual').style.backgroundColor = bandData[band1Color].color;
+            document.getElementById('band2-visual').style.backgroundColor = bandData[band2Color].color;
+            document.getElementById('band4-visual').style.backgroundColor = bandData[band4Color].color;
+            document.getElementById('band5-visual').style.backgroundColor = bandData[band5Color].color;
+
+            // Calculate resistance based on type
+            let significantDigits;
+            let multiplier;
+            let tolerance;
+
+            if (isFiveBand) {
+                const band3Color = document.getElementById('band3-select').value;
+                document.getElementById('band3-visual').style.backgroundColor = bandData[band3Color].color;
+                significantDigits = `${bandData[band1Color].digit}${bandData[band2Color].digit}${bandData[band3Color].digit}`;
+                multiplier = bandData[band4Color].multiplier;
+                tolerance = bandData[band5Color].tolerance;
+            } else { // 4-band
+                significantDigits = `${bandData[band1Color].digit}${bandData[band2Color].digit}`;
+                multiplier = bandData[band4Color].multiplier;
+                tolerance = bandData[band5Color].tolerance;
+            }
+            
+            const resistance = parseFloat(significantDigits) * multiplier;
+
+            // Format resistance with appropriate units
+            let formattedResistance;
+            if (resistance >= 1000000) {
+                formattedResistance = (resistance / 1000000).toFixed(2) + ' MΩ';
+            } else if (resistance >= 1000) {
+                formattedResistance = (resistance / 1000).toFixed(2) + ' kΩ';
+            } else {
+                formattedResistance = resistance.toFixed(2) + ' Ω';
+            }
+
+            resultText.textContent = `${formattedResistance}`;
+            toleranceText.textContent = `Tolerance: ±${tolerance}%`;
+        }
+
+        // Add event listeners to all dropdowns
+        const allSelects = document.querySelectorAll('select');
+        allSelects.forEach(select => {
+            select.addEventListener('change', updateResistor);
+        });
+        
+        // Add event listeners to radio buttons
+        radio4Band.addEventListener('change', switchResistorType);
+        radio5Band.addEventListener('change', switchResistorType);
+
+        // Initial setup
+        populateSelect(bandSelects.digit[0], 'digit');
+        populateSelect(bandSelects.digit[1], 'digit');
+        switchResistorType();
+    </script>
+</body>
+</html>
