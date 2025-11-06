@@ -19,9 +19,9 @@
             box-sizing: border-box;
         }
         .container {
-            background-color: #ffffff;
+            background-color: #f7f7f7; /* Light Gray Background */
             border-radius: 1.5rem; /* More rounded corners */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* Enhanced shadow */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced outer shadow for 3D effect */
             padding: 2.5rem;
             width: 100%;
             max-width: 28rem; /* Slightly wider */
@@ -44,12 +44,17 @@
             font-size: 1rem;
             color: #475569; /* Slightly darker text for inputs */
             background-color: #f8fafc; /* Very light background for inputs */
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s; /* Added transform */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Initial inner shadow for 3D effect */
         }
         input[type="number"]:focus, select:focus {
             outline: none;
             border-color: #6366f1; /* Indigo focus border (consistent with index.html button focus) */
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Soft focus shadow */
+        }
+        input[type="number"]:active, select:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         .result-box {
             background-color: #e0f2fe; /* Light blue for results */
@@ -79,7 +84,7 @@
     <link rel="manifest" href="manifest.json">
 </head>
 <body class="flex items-center justify-center min-h-screen bg-black p-4">
-    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+    <div class="container">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Duct Flow Calculator</h1>
 
         <div class="input-group">
@@ -89,8 +94,7 @@
                 <option value="circular">Circular</option>
             </select>
         </div>
-
-        <div id="rectangularInputs" class="input-group">
+<div id="rectangularInputs" class="input-group">
             <div class="flex-row">
                 <div>
                     <label for="width">Width:</label>
@@ -168,6 +172,7 @@
     </div>
 
     <script>
+// ... (rest of the script is unchanged) ...
         // Register service worker for PWA capabilities
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
