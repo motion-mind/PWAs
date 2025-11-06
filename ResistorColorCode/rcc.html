@@ -3,15 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resistor Color Code Calculator</title>
+    <title>New Resistor Color Code Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* Consistent body style: Black background */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000; /* Black background */
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* Consistent card style: White background, constrained width */
+        .container-card {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 32rem; /* Slightly wider max-width for component density */
+            width: 100%;
+            border: 1px solid #e5e7eb;
         }
 
         .resistor-body {
@@ -24,7 +40,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px; /* Add gap between bands */
+            gap: 12px;
         }
 
         .resistor-lead {
@@ -33,41 +49,36 @@
             background-color: #a0a0a0;
         }
 
-        .band-wrapper {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            gap: 12px;
-        }
-
         .band {
             width: 25px;
             height: 100%;
         }
-        
-        /* Consistent focus style */
-        select:focus {
+
+        /* Consistent focus style (Indigo/Blue-600) */
+        select:focus, input[type="radio"]:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); /* Indigo glow */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
             border-color: #6366f1;
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
+    <div class="container-card">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Resistor Color Code Calculator</h1>
         <p class="text-center text-gray-500 mb-8">Select the colors to determine the resistance value.</p>
 
-        <div class="mb-8">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Resistor Type</label>
-            <div class="flex items-center space-x-4">
+        <div class="mb-8 p-4 border rounded-lg bg-gray-50">
+            <label class="block text-sm font-medium text-gray-700 mb-2 font-semibold">Resistor Type</label>
+            <div class="flex items-center space-x-6">
                 <div class="flex items-center">
-                    <input id="resistor-type-4" name="resistor-type" type="radio" checked class="focus:ring-blue-600 h-4 w-4 text-blue-600 border-gray-300">
+                    <input id="resistor-type-4" name="resistor-type" type="radio" checked
+                           class="focus:ring-blue-600 h-4 w-4 text-blue-600 border-gray-300 transition duration-150">
                     <label for="resistor-type-4" class="ml-2 block text-sm font-medium text-gray-700">4-Band</label>
                 </div>
                 <div class="flex items-center">
-                    <input id="resistor-type-5" name="resistor-type" type="radio" class="focus:ring-blue-600 h-4 w-4 text-blue-600 border-gray-300">
+                    <input id="resistor-type-5" name="resistor-type" type="radio"
+                           class="focus:ring-blue-600 h-4 w-4 text-blue-600 border-gray-300 transition duration-150">
                     <label for="resistor-type-5" class="ml-2 block text-sm font-medium text-gray-700">5-Band</label>
                 </div>
             </div>
@@ -85,32 +96,33 @@
 
                 <div class="resistor-lead absolute right-0 -mr-12 w-12 h-2 rounded-r-md bg-gray-500"></div>
             </div>
-            <div class="text-center text-gray-600 mt-4">
-                <p id="result" class="text-2xl font-semibold"></p>
-                <p id="tolerance" class="text-lg"></p>
+            <div class="text-center text-gray-600 mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p class="text-xl font-medium text-gray-800">Resistance Value:</p>
+                <p id="result" class="text-4xl font-extrabold text-blue-700 mt-1">--</p>
+                <p id="tolerance" class="text-lg text-gray-600 mt-2">Tolerance: --</p>
             </div>
         </div>
 
-        <div class="space-y-6">
+        <div class="space-y-4">
             <div>
-                <label for="band1-select" class="band-label block text-sm font-medium text-gray-700">Band 1 (First Digit)</label>
-                <select id="band1-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+                <label for="band1-select" class="band-label block text-sm font-semibold text-gray-700 mb-1">Band 1 (First Digit)</label>
+                <select id="band1-select" class="shadow-sm block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-lg"></select>
             </div>
             <div>
-                <label for="band2-select" class="band-label block text-sm font-medium text-gray-700">Band 2 (Second Digit)</label>
-                <select id="band2-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+                <label for="band2-select" class="band-label block text-sm font-semibold text-gray-700 mb-1">Band 2 (Second Digit)</label>
+                <select id="band2-select" class="shadow-sm block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-lg"></select>
             </div>
             <div id="band3-container" class="hidden">
-                <label for="band3-select" class="band-label block text-sm font-medium text-gray-700">Band 3 (Third Digit)</label>
-                <select id="band3-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+                <label for="band3-select" class="band-label block text-sm font-semibold text-gray-700 mb-1">Band 3 (Third Digit)</label>
+                <select id="band3-select" class="shadow-sm block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-lg"></select>
             </div>
             <div>
-                <label id="band4-label" for="band4-select" class="band-label block text-sm font-medium text-gray-700">Band 4 (Multiplier)</label>
-                <select id="band4-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+                <label id="band4-label" for="band4-select" class="band-label block text-sm font-semibold text-gray-700 mb-1">Band 4 (Multiplier)</label>
+                <select id="band4-select" class="shadow-sm block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-lg"></select>
             </div>
             <div>
-                <label id="band5-label" for="band5-select" class="band-label block text-sm font-medium text-gray-700">Band 5 (Tolerance)</label>
-                <select id="band5-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"></select>
+                <label id="band5-label" for="band5-select" class="band-label block text-sm font-semibold text-gray-700 mb-1">Band 5 (Tolerance)</label>
+                <select id="band5-select" class="shadow-sm block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-lg"></select>
             </div>
         </div>
     </div>
@@ -159,10 +171,17 @@
                 textFn = ([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)} (${val.digit})`;
             } else if (type === 'multiplier') {
                 data = Object.entries(bandData).filter(([key, val]) => val.multiplier !== null);
-                textFn = ([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)} (x${val.multiplier})`;
+                textFn = ([key, val]) => {
+                    let multiplierText;
+                    if (val.multiplier >= 1000000) multiplierText = `x${val.multiplier / 1000000}M`;
+                    else if (val.multiplier >= 1000) multiplierText = `x${val.multiplier / 1000}k`;
+                    else if (val.multiplier < 1) multiplierText = `x${val.multiplier}`;
+                    else multiplierText = `x${val.multiplier}`;
+                    return `${key.charAt(0).toUpperCase() + key.slice(1)} (${multiplierText})`;
+                };
             } else if (type === 'tolerance') {
                 data = Object.entries(bandData).filter(([key, val]) => val.tolerance !== null);
-                textFn = ([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)} (${val.tolerance}%)`;
+                textFn = ([key, val]) => `${key.charAt(0).toUpperCase() + key.slice(1)} (±${val.tolerance}%)`;
             }
 
             data.forEach(([key, val]) => {
@@ -182,17 +201,15 @@
                 band4Label.textContent = 'Band 4 (Multiplier)';
                 band5Label.textContent = 'Band 5 (Tolerance)';
                 populateSelect(bandSelects.fiveDigit[0], 'digit');
-                populateSelect(bandSelects.multiplier[0], 'multiplier');
-                populateSelect(bandSelects.tolerance[0], 'tolerance');
-
             } else { // 4-band
                 band3Container.classList.add('hidden');
                 band3Visual.classList.add('hidden');
                 band4Label.textContent = 'Band 3 (Multiplier)';
                 band5Label.textContent = 'Band 4 (Tolerance)';
-                populateSelect(bandSelects.multiplier[0], 'multiplier');
-                populateSelect(bandSelects.tolerance[0], 'tolerance');
             }
+            // Repopulate multiplier/tolerance to handle initial load/switch
+            populateSelect(bandSelects.multiplier[0], 'multiplier');
+            populateSelect(bandSelects.tolerance[0], 'tolerance');
             updateResistor();
         }
 
@@ -231,12 +248,14 @@
 
             // Format resistance with appropriate units
             let formattedResistance;
-            if (resistance >= 1000000) {
-                formattedResistance = (resistance / 1000000).toFixed(2) + ' MΩ';
+            if (resistance >= 1000000000) {
+                formattedResistance = (resistance / 1000000000).toFixed(3) + ' GΩ';
+            } else if (resistance >= 1000000) {
+                formattedResistance = (resistance / 1000000).toFixed(3) + ' MΩ';
             } else if (resistance >= 1000) {
-                formattedResistance = (resistance / 1000).toFixed(2) + ' kΩ';
+                formattedResistance = (resistance / 1000).toFixed(3) + ' kΩ';
             } else {
-                formattedResistance = resistance.toFixed(2) + ' Ω';
+                formattedResistance = resistance.toFixed(3) + ' Ω';
             }
 
             resultText.textContent = `${formattedResistance}`;
@@ -256,7 +275,7 @@
         // Initial setup
         populateSelect(bandSelects.digit[0], 'digit');
         populateSelect(bandSelects.digit[1], 'digit');
-        switchResistorType();
+        switchResistorType(); // Triggers the first calculation
     </script>
 </body>
 </html>
