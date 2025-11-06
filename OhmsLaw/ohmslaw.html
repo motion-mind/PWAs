@@ -20,13 +20,13 @@
             box-sizing: border-box;
         }
 
-        /* Consistent card style: White background, constrained width */
+        /* Consistent card style: Light Gray background, constrained width */
         .container-card {
             max-width: 28rem;
             width: 100%;
-            background-color: #ffffff; /* White card background */
+            background-color: #f7f7f7; /* Light Gray Background */
             border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced outer shadow for 3D effect */
             padding: 2.5rem;
             border: 1px solid #e5e7eb; /* Light border */
         }
@@ -50,6 +50,7 @@
             border: 1px solid #cbd5e1; /* Lighter border */
             color: #475569; /* Darker text for input content */
             transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Initial inner shadow for 3D effect */
         }
 
         .input-group input:focus, .input-group select:focus {
@@ -58,10 +59,16 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
         }
 
+        .input-group input:active, .input-group select:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
         .input-group input[readonly] {
             background-color: #e5e7eb; /* Light gray for readonly */
             border-color: #d1d5db;
             cursor: not-allowed;
+            box-shadow: none; /* No 3D look for readonly */
         }
 
         .button-group {
@@ -76,10 +83,16 @@
             padding: 0.75rem 1.5rem;
             font-weight: 700;
             border-radius: 0.5rem;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s;
             border: none;
             cursor: pointer;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* 3D initial shadow */
+        }
+
+        .button-group button:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
         }
 
         .calculate-btn {
@@ -92,6 +105,7 @@
             /* Matched to green-700 in index.html */
             background-color: #047857;
             transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
 
         .clear-btn {
@@ -102,6 +116,7 @@
         .clear-btn:hover {
             background-color: #c53030;
             transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
 
         /* Formula Display Styling */
@@ -126,7 +141,7 @@
 <body class="flex items-center justify-center min-h-screen p-4">
     <div class="container-card">
         <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Ohm's Law Calculator</h1>
-        <p class="text-center text-sm mb-8 text-gray-500">
+<p class="text-center text-sm mb-8 text-gray-500">
             Enter any two values to calculate the others.
         </p>
 
@@ -164,6 +179,7 @@
     </div>
 
     <script>
+// ... (rest of the script is unchanged) ...
         document.addEventListener('DOMContentLoaded', () => {
             const voltageInput = document.getElementById('voltage');
             const currentInput = document.getElementById('current');
