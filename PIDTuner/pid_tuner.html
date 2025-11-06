@@ -30,7 +30,7 @@
             border: 1px solid #e5e7eb;
         }
 
-        /* 3D Input Style */
+        /* 3D Input/Select Style */
         .input-text {
             width: 100%;
             padding: 0.75rem;
@@ -108,18 +108,40 @@
         
         <div id="standard-pid" class="tab-content">
             
-            
-            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                <div class="input-box-bg p-5 rounded-lg">
-                    <label for="outputSpan" class="block text-lg font-semibold text-black mb-2">Output Control Span (Max Output - Min Output)</label>
-                    <input type="number" id="outputSpan" value="100" placeholder="e.g., 100 for 0-100%" class="input-text">
-                    <p class="text-sm text-gray-700 mt-2">Example: 100.0 (if range is 0 to 100%) or 5.0 (if range is 3 to 8 psi).</p>
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                
+                <div class="input-box-bg p-5 rounded-lg md:col-span-1">
+                    <label for="engineeringUnits" class="block text-lg font-semibold text-black mb-2">Engineering Units</label>
+                    <select id="engineeringUnits" class="input-text">
+                        <option value="%">%</option>
+                        <option value="V">V</option>
+                        <option value="mA">mA</option>
+                        <option value="psi">psi</option>
+                        <option value="°F">°F</option>
+                        <option value="CFM">CFM</option>
+                    </select>
+                    <p class="text-sm text-gray-700 mt-2">Select the unit for the inputs below.</p>
                 </div>
                 
-                <div class="input-box-bg p-5 rounded-lg">
+                <div class="input-box-bg p-5 rounded-lg col-span-2">
+                    <label class="block text-lg font-semibold text-black mb-2">Output Control Range (Min and Max Output)</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <input type="number" id="minOutput" value="0" placeholder="Min Output (e.g., 0)" class="input-text">
+                            <p class="text-xs text-gray-700 mt-1 ml-1">Min Output (e.g., 0% or 3 psi)</p>
+                        </div>
+                        <div>
+                            <input type="number" id="maxOutput" value="100" placeholder="Max Output (e.g., 100)" class="input-text">
+                            <p class="text-xs text-gray-700 mt-1 ml-1">Max Output (e.g., 100% or 8 psi)</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-700 mt-2">The span (Max - Min) is used for the calculation. Example span: $100 - 0 = 100$.</p>
+                </div>
+                
+                <div class="input-box-bg p-5 rounded-lg md:col-span-1">
                     <label for="throttleRange" class="block text-lg font-semibold text-black mb-2">Throttling Range (Desired Error for 0-100% Output)</label>
                     <input type="number" id="throttleRange" value="5" placeholder="e.g., 5.0 °F" class="input-text">
-                    <p class="text-sm text-gray-700 mt-2">Example: If Setpoint is 72F and TR is 2F, the heating valve is 100% open at 70F and 0% open at 72F.</p>
+                    <p class="text-sm text-gray-700 mt-2">Example: If Setpoint is 72°F and TR is 2°F, the valve opens fully between 70°F and 72°F.</p>
                 </div>
                 
                 <div class="hidden">
@@ -143,7 +165,10 @@
                     </div>
                 </div>
                 
-                <p class="text-sm text-black mt-2">
+                <p class="text-base text-gray-700 mt-5 border-t pt-3 border-blue-300">
+                    *Formula: pg = (Output Span / TR) × 1000. ig = pg × 0.02 (Recommended start).
+                </p>
+                <p class="text-sm text-gray-700 mt-2">
                     Note: Recommended setting for dg is 0 unless specifically required for fast-responding systems.
                 </p>
             </div>
@@ -154,21 +179,27 @@
         // --- Standard PID Calculation (LOOP Command) ---
 
         function calculateStandardPID() {
-            const span = parseFloat(document.getElementById('outputSpan').value);
+            // Get inputs
+            const maxOutput = parseFloat(document.getElementById('maxOutput').value);
+            const minOutput = parseFloat(document.getElementById('minOutput').value);
             const throttle = parseFloat(document.getElementById('throttleRange').value);
-            // DG is removed from input and is assumed 0 for the LOOP command
+            
+            // Calculate Span
+            const span = maxOutput - minOutput;
+
             const dg = 0; 
             const resultsDiv = document.getElementById('pidResults');
             
-            if (isNaN(span) || isNaN(throttle) || span <= 0 || throttle <= 0 || isNaN(dg)) {
+            // Validation: Check for valid numbers, positive throttle, and max > min
+            if (isNaN(maxOutput) || isNaN(minOutput) || isNaN(throttle) || throttle <= 0 || maxOutput <= minOutput) {
                 resultsDiv.classList.add('hidden');
                 return;
             }
 
-            // Formula: pg = (Output Span / Throttling Range) * 1000 (Source: Manual 3-66)
+            // Formula: pg = (Output Span / Throttling Range) * 1000
             const pg = (span / throttle) * 1000;
             
-            // Formula: ig = pg * 0.02 (Recommended starting point: 2% of pg) (Source: Manual 3-67)
+            // Formula: ig = pg * 0.02 (Recommended starting point: 2% of pg)
             const ig = pg * 0.02;
 
             document.getElementById('resultPG').textContent = pg.toFixed(0);
