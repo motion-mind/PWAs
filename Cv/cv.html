@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flow Coefficient Calculator</title>
-    <!-- Link to manifest.json for PWA capabilities -->
     <link rel="manifest" href="manifest.json">
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Base styles for body, ensuring full height and centering */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
+            background-color: #000000; /* Black background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -52,7 +50,7 @@
         }
         input[type="number"]:focus {
             outline: none;
-            border-color: #6366f1; /* Indigo focus border */
+            border-color: #6366f1; /* Indigo focus border (consistent with index.html button focus) */
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25); /* Indigo focus shadow */
         }
         .label {
@@ -83,7 +81,7 @@
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen bg-black p-4">
-    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+    <div class="container">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Flow Coefficient Calculator</h1>
 
         <div class="mb-6">
@@ -100,8 +98,6 @@
             <label for="oldFlowCoefficient" class="label">Old Flow Coefficient (Cv):</label>
             <input type="number" id="oldFlowCoefficient" placeholder="e.g., 50" class="focus:border-indigo-500 focus:ring-indigo-500">
         </div>
-
-        <!-- The calculate button has been removed -->
 
         <div id="result" class="result-box hidden">
             New Flow Coefficient (Cv): <span id="newFlowCoefficientValue" class="font-bold"></span>
@@ -177,4 +173,3 @@
     </script>
 </body>
 </html>
-
