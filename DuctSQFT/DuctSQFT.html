@@ -11,13 +11,46 @@
             font-family: 'Inter', sans-serif;
             background-color: #000000; /* Black background */
         }
+        /* Style for the main container */
+        .container-card {
+            background-color: #f7f7f7; /* Light Gray Background */
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced outer shadow for 3D effect */
+            border: 1px solid #e5e7eb;
+            padding: 2rem;
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        /* 3D Button Style for Calculate */
+        #calculateBtn {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: all 0.15s ease-in-out;
+        }
+        #calculateBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        #calculateBtn:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 3D look for inputs */
+        input[type="number"] {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Initial inner shadow for 3D effect */
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="number"]:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen bg-black p-4">
-    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md border border-gray-200">
+    <div class="container-card w-full max-w-md">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Air Duct Sizing Calculator</h1>
-
-        <div class="mb-6">
+<div class="mb-6">
             <label class="block text-gray-700 text-sm font-semibold mb-2">Duct Type:</label>
             <div class="flex space-x-4">
                 <label class="inline-flex items-center">
@@ -64,8 +97,7 @@
                        transition ease-in-out duration-300 text-center text-lg md:text-xl">
             Calculate Square Feet
         </button>
-
-        <div id="resultContainer" class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200 text-center hidden">
+<div id="resultContainer" class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-200 text-center hidden">
             <p class="text-gray-700 text-lg font-medium">Calculated Surface Area:</p>
             <p id="result" class="text-blue-800 text-4xl font-extrabold mt-2"></p>
             <p class="text-gray-600 text-sm mt-1">square feet</p>
@@ -77,6 +109,7 @@
     </div>
 
     <script>
+// ... (rest of the script is unchanged) ...
         // Get references to elements
         const ductTypeRadios = document.querySelectorAll('input[name="ductType"]');
         const rectangularInputsDiv = document.getElementById('rectangularInputs');
