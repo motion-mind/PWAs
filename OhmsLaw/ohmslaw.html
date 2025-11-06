@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ohm's Law Calculator</title>
+    <title>New Ohm's Law Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Consistent body style: Black background */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000; /* Black background */
+            background-color: #000000;
             color: #e2e8f0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 1rem;
+            box-sizing: border-box;
         }
 
-        .container {
-            /* This custom class ensures the width constraint (max-width: 28rem) and standard padding */
+        /* Consistent card style: White background, constrained width */
+        .container-card {
             max-width: 28rem;
             width: 100%;
             background-color: #ffffff; /* White card background */
@@ -52,7 +54,7 @@
 
         .input-group input:focus, .input-group select:focus {
             outline: none;
-            border-color: #6366f1; /* Indigo focus border (consistent with index.html button focus) */
+            border-color: #6366f1; /* Indigo focus border */
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
         }
 
@@ -92,10 +94,6 @@
             transform: translateY(-2px);
         }
 
-        .calculate-btn:active {
-            transform: translateY(0);
-        }
-
         .clear-btn {
             background-color: #e53e3e;
             color: #e2e8f0;
@@ -106,17 +104,73 @@
             transform: translateY(-2px);
         }
 
-        .clear-btn:active {
-            transform: translateY(0);
+        /* Ohm's Law Triangle Styling (Pictogram) */
+        .ohm-triangle {
+            width: 150px;
+            height: 130px;
+            margin: 0 auto 20px;
+            position: relative;
+            background: #f7f7f7;
+            border: 3px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ohm-triangle::before {
+            content: 'V';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .ohm-triangle-bottom {
+            display: flex;
+            height: 50%;
+            border-top: 3px solid #333;
+        }
+
+        .ohm-triangle-current, .ohm-triangle-resistance {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .ohm-triangle-current {
+            content: 'I';
+            border-right: 3px solid #333;
+        }
+
+        .ohm-triangle-resistance {
+            content: 'R';
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-black p-4">
-    <div class="container">
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="container-card">
         <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Ohm's Law Calculator</h1>
         <p class="text-center text-sm mb-8 text-gray-500">
             Enter any two values to calculate the others.
         </p>
+
+        <div class="flex justify-center mb-8">
+            <div class="ohm-triangle">
+                <div style="height: 50%;"></div>
+                <div class="ohm-triangle-bottom">
+                    <div class="ohm-triangle-current">I</div>
+                    <div class="ohm-triangle-resistance">R</div>
+                </div>
+            </div>
+        </div>
 
         <div class="input-group">
             <label for="voltage">Voltage (V)</label>
