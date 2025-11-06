@@ -4,38 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Belt & Pulley Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --primary-color: #2563eb; /* Blue-600 for consistency with index.html buttons */
             --secondary-color: #343a40;
             --background-color: #000000; /* Black background */
-            --card-background: #ffffff; /* White card background */
+            --card-background: #f7f7f7; /* Light Gray Background */
             --text-color: #212529;
             --border-color: #dee2e6;
             --focus-color: rgba(99, 102, 241, 0.5); /* Indigo focus glow */
         }
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif; /* Adjusted font for consistency */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            /* CORRECTED: Changed from flex-start to center for vertical centering */
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
         }
-        .container-card {
+        .container {
             width: 100%;
             max-width: 500px;
             background-color: var(--card-background);
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced outer shadow for 3D effect */
             padding: 30px;
-            border: 1px solid #e5e7eb; /* Added subtle border */
         }
         header h1 {
             font-size: 1.75em;
@@ -58,13 +55,19 @@
             border-radius: 6px;
             font-size: 1em;
             box-sizing: border-box;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Initial inner shadow for 3D effect */
         }
         .input-group input:focus {
             outline: none;
             border-color: #6366f1; /* Indigo focus border */
             box-shadow: 0 0 0 3px var(--focus-color);
         }
+        .input-group input:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
         button {
             width: 100%;
             padding: 12px;
@@ -75,12 +78,19 @@
             font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* 3D initial shadow */
         }
         button:hover {
             background-color: #047857; /* Green-700 for consistency with index.html buttons */
             transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
+        button:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+
         #results {
             margin-top: 25px;
             padding-top: 20px;
@@ -99,7 +109,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px;
-            background-color: #f8fafc; /* Lighter background for result items */
+            background-color: #ffffff;
             border-radius: 6px;
             margin-bottom: 10px;
             border: 1px solid #e5e7eb;
@@ -133,12 +143,11 @@
 </head>
 <body>
 
-    <div class="container-card">
+    <div class="container">
         <header>
             <h1>Belt & Pulley Calculator ⚙️</h1>
         </header>
-
-        <form id="calculator-form">
+<form id="calculator-form">
             <div class="input-group">
                 <label for="motor-rpm">Motor RPM</label>
                 <input type="number" id="motor-rpm" value="1750" required>
@@ -193,6 +202,7 @@
     </div>
 
     <script>
+// ... (rest of the script is unchanged) ...
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('calculator-form');
             const resultsDiv = document.getElementById('results');
@@ -216,20 +226,14 @@
                 const speedRatio = drivenPulley / motorPulley;
                 const drivenRpm = motorRpm / speedRatio;
 
-                // Belt Length Formula (Outside length for V-Belts)
                 const term1 = 2 * centerDistance;
                 const term2 = (Math.PI * (drivenPulley + motorPulley)) / 2;
-                // This approximation is for the correction factor for belt length based on pulley difference
-                const term3 = Math.pow(drivenPulley - motorPulley, 2) / (4 * centerDistance); 
+                const term3 = Math.pow(drivenPulley - motorPulley, 2) / (4 * centerDistance);
                 const beltLength = term1 + term2 + term3;
 
-                // Belt Speed Formula (Feet per minute, where diameter is in inches)
-                // (RPM * PI * D) / 12
                 const beltSpeed = (motorRpm * Math.PI * motorPulley) / 12;
 
                 // --- Convert to Standard Belt Sizes ---
-                // Standard V-belt length (e.g., A40 is 40 inches inside circumference)
-                // We use the calculated length (outside) and round it to find the closest standard size number.
                 const closestSize = Math.round(beltLength);
                 const aSeriesSize = `A${closestSize} or 4L${closestSize}0`;
                 const bSeriesSize = `B${closestSize} or 5L${closestSize}0`;
