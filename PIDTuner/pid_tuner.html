@@ -35,12 +35,12 @@
             width: 100%;
             padding: 0.75rem;
             border-radius: 0.5rem;
-            background-color: #f8fafc;
+            background-color: #ffffff; /* White input background */
             border: 1px solid #cbd5e1;
-            color: #475569;
+            color: #000000; /* BLACK text for input content */
             transition: all 0.2s ease-in-out, transform 0.1s;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Initial inner shadow for 3D effect */
-            font-size: 1.125rem; /* Large text size from original */
+            font-size: 1.125rem;
         }
 
         .input-text:focus {
@@ -61,7 +61,7 @@
             font-weight: 700;
             border-radius: 0.5rem;
             background-color: #2563eb; /* Blue */
-            color: #e2e8f0;
+            color: #ffffff; /* White text for contrast */
             border: none;
             cursor: pointer;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
@@ -97,51 +97,58 @@
         .result-value {
             font-size: 2.25rem; /* text-4xl equivalent for impact */
             font-weight: 700;
+            color: #000000; /* BLACK result value */
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
 
     <div class="container-card">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">PPCL Control Loop Calculator</h1>
-        <p class="text-center text-gray-500 mb-6 text-base">Calculates Proportional Gain (pg) and starting Integral Gain (ig) based on the control range and throttling range.</p>
+        <h1 class="text-3xl font-bold text-center text-black mb-6">PPCL Control Loop Calculator</h1>
+        <p class="text-center text-black mb-6 text-base">Calculates Proportional Gain (pg) and starting Integral Gain (ig) based on the control range and throttling range.</p>
         
         <div id="standard-pid" class="tab-content">
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <p class="text-base text-gray-700 mb-4">Calculates Proportional Gain (pg) and starting Integral Gain (ig) based on the control range and throttling range.</p>
+            
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
                 <div class="input-box-bg p-5 rounded-lg">
-                    <label for="outputSpan" class="block text-lg font-semibold text-gray-700 mb-2">Output Control Span</label>
-                    <input type="number" id="outputSpan" value="100" placeholder="e.g., 100" class="input-text">
-                    <p class="text-sm text-gray-500 mt-2">Max Output - Min Output. e.g., 100.0 (for 0-100%) or 5.0 (for 3-8 psi).</p>
+                    <label for="outputSpan" class="block text-lg font-semibold text-black mb-2">Output Control Span (Max Output - Min Output)</label>
+                    <input type="number" id="outputSpan" value="100" placeholder="e.g., 100 for 0-100%" class="input-text">
+                    <p class="text-sm text-gray-700 mt-2">Example: 100.0 (if range is 0 to 100%) or 5.0 (if range is 3 to 8 psi).</p>
                 </div>
                 
                 <div class="input-box-bg p-5 rounded-lg">
-                    <label for="throttleRange" class="block text-lg font-semibold text-gray-700 mb-2">Throttling Range (TR)</label>
+                    <label for="throttleRange" class="block text-lg font-semibold text-black mb-2">Throttling Range (Desired Error for 0-100% Output)</label>
                     <input type="number" id="throttleRange" value="5" placeholder="e.g., 5.0 °F" class="input-text">
-                    <p class="text-sm text-gray-500 mt-2">Desired error for 100% output change. Smaller TR = higher, more sensitive gain (pg).</p>
+                    <p class="text-sm text-gray-700 mt-2">Example: If Setpoint is 72F and TR is 2F, the heating valve is 100% open at 70F and 0% open at 72F.</p>
+                </div>
+                
+                <div class="hidden">
+                    <input type="hidden" id="derivativeGain" value="0">
                 </div>
             </div>
 
-            <button onclick="calculateStandardPID()" class="calculate-btn">Calculate Initial Gains</button>
+            <button onclick="calculateStandardPID()" class="calculate-btn">Calculate Standard PID Gains</button>
 
             <div id="pidResults" class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg hidden">
-                <h3 class="text-xl font-bold text-blue-800 mb-4">Calculated Initial Gains:</h3>
+                <h3 class="text-xl font-bold text-black mb-4">Calculated Initial Gains:</h3>
+                <p class="text-base text-gray-700">This formula determines the pg value that corresponds to your chosen TR (100% output change for TR error).</p>
                 
                 <div class="mt-4 space-y-4">
                     <div class="result-item bg-white p-3 rounded-md shadow-sm">
-                        <span class="text-lg font-semibold text-gray-800">Proportional Gain (pg):</span>
-                        <span id="resultPG" class="font-bold text-indigo-700 result-value">0</span>
+                        <span class="text-lg font-semibold text-black">Proportional Gain (pg):</span>
+                        <span id="resultPG" class="result-value">0</span>
                     </div>
                     <div class="result-item bg-white p-3 rounded-md shadow-sm">
-                        <span class="text-lg font-semibold text-gray-800">Initial Integral Gain (ig):</span>
-                        <span id="resultIG" class="font-bold text-indigo-700 result-value">0</span>
+                        <span class="text-lg font-semibold text-black">Initial Integral Gain (ig):</span>
+                        <span id="resultIG" class="result-value">0</span>
                     </div>
                 </div>
-                
-                <p class="text-base text-gray-600 mt-5 border-t pt-3 border-blue-300">
+                <p class="text-base text-gray-700 mt-5 border-t pt-3 border-blue-300">
                     *Formula: pg = (Output Span / TR) × 1000. ig = pg × 0.02 (Recommended start).
                 </p>
-                <p class="text-sm text-gray-500 mt-2">
-                    Note: Derivative gain (dg) is assumed 0. Final tuning is manual after pg and ig are set.
+                <p class="text-sm text-gray-700 mt-2">
+                    Note: Recommended setting for dg is 0 unless specifically required for fast-responding systems.
                 </p>
             </div>
         </div>
@@ -157,16 +164,15 @@
             const dg = 0; 
             const resultsDiv = document.getElementById('pidResults');
             
-            // Input validation: ensure inputs are valid positive numbers
             if (isNaN(span) || isNaN(throttle) || span <= 0 || throttle <= 0 || isNaN(dg)) {
                 resultsDiv.classList.add('hidden');
                 return;
             }
 
-            // Formula: pg = (Output Span / Throttling Range) * 1000 
+            // Formula: pg = (Output Span / Throttling Range) * 1000 (Source: Manual 3-66)
             const pg = (span / throttle) * 1000;
             
-            // Formula: ig = pg * 0.02 (Recommended starting point: 2% of pg)
+            // Formula: ig = pg * 0.02 (Recommended starting point: 2% of pg) (Source: Manual 3-67)
             const ig = pg * 0.02;
 
             document.getElementById('resultPG').textContent = pg.toFixed(0);
