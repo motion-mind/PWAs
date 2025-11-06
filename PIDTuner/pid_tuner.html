@@ -128,22 +128,22 @@
     <div class="container-card">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Simple PID Tuner (IMC Method)</h1>
         <p class="text-center text-sm mb-8 text-gray-500">
-            Enter the three key parameters of your process: Process Gain ($K_p$), Time Constant ($\tau$), and Dead Time ($L$).
+            Enter the three key parameters of your process: **Process Gain ($K_p$), Time Constant ($\tau$), and Dead Time ($L$)**.
         </p>
 
         <div class="input-group">
-            <label for="kp">Process Gain ($K_p$)</label>
+            <label for="kp">Process Gain (Kp)</label>
             <input type="number" id="kp" placeholder="e.g., 2.5 (ΔOutput / ΔInput)" step="any">
         </div>
 
         <div class="input-group">
-            <label for="tau">Time Constant ($\tau$) (Time to reach 63.2% of final change)</label>
+            <label for="tau">Time Constant (Tau) (Time to reach 63.2% of final change)</label>
             <input type="number" id="tau" placeholder="e.g., 5.0 (seconds or minutes)" step="any">
         </div>
 
         <div class="input-group">
-            <label for="L">Dead Time ($L$) (Delay before process responds)</label>
-            <input type="number" id="L" placeholder="e.g., 1.5 (same unit as τ)" step="any">
+            <label for="L">Dead Time (L) (Delay before process responds)</label>
+            <input type="number" id="L" placeholder="e.g., 1.5 (same unit as Tau)" step="any">
         </div>
 
         <button id="calculateBtn" class="calculate-btn">Calculate PID Values</button>
@@ -152,15 +152,15 @@
 
         <div id="resultContainer" class="result-box hidden">
             <div class="result-item">
-                <span>Proportional Gain ($K_c$ or P)</span>
+                <span>Proportional Gain (Kc or P)</span>
                 <strong id="result-P">--</strong>
             </div>
             <div class="result-item">
-                <span>Integral Time ($\tau_I$ or I)</span>
+                <span>Integral Time (Tau-I or I)</span>
                 <strong id="result-I">--</strong>
             </div>
             <div class="result-item">
-                <span>Derivative Time ($\tau_D$ or D)</span>
+                <span>Derivative Time (Tau-D or D)</span>
                 <strong id="result-D">--</strong>
             </div>
         </div>
@@ -189,7 +189,7 @@
 
             // Input Validation
             if (isNaN(Kp_process) || Kp_process === 0 || isNaN(tau) || tau <= 0 || isNaN(L) || L < 0) {
-                errorMessageDiv.textContent = 'Please enter valid, non-zero values for Process Gain ($K_p$) and a positive Time Constant ($\tau$). Dead Time ($L$) must be non-negative.';
+                errorMessageDiv.textContent = 'Please enter valid, non-zero values for Process Gain (Kp) and a positive Time Constant (Tau). Dead Time (L) must be non-negative.';
                 errorMessageDiv.classList.remove('hidden');
                 return;
             }
