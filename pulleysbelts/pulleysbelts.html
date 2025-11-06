@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Belt & Pulley Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --primary-color: #2563eb; /* Blue-600 for consistency with index.html buttons */
@@ -16,23 +17,25 @@
         }
         body {
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', sans-serif; /* Adjusted font for consistency */
             background-color: var(--background-color);
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            /* CORRECTED: Changed from flex-start to center for vertical centering */
+            align-items: center;
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
         }
-        .container {
+        .container-card {
             width: 100%;
             max-width: 500px;
             background-color: var(--card-background);
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             padding: 30px;
+            border: 1px solid #e5e7eb; /* Added subtle border */
         }
         header h1 {
             font-size: 1.75em;
@@ -96,7 +99,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px;
-            background-color: #ffffff;
+            background-color: #f8fafc; /* Lighter background for result items */
             border-radius: 6px;
             margin-bottom: 10px;
             border: 1px solid #e5e7eb;
@@ -130,7 +133,7 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="container-card">
         <header>
             <h1>Belt & Pulley Calculator ⚙️</h1>
         </header>
@@ -213,14 +216,20 @@
                 const speedRatio = drivenPulley / motorPulley;
                 const drivenRpm = motorRpm / speedRatio;
 
+                // Belt Length Formula (Outside length for V-Belts)
                 const term1 = 2 * centerDistance;
                 const term2 = (Math.PI * (drivenPulley + motorPulley)) / 2;
-                const term3 = Math.pow(drivenPulley - motorPulley, 2) / (4 * centerDistance);
+                // This approximation is for the correction factor for belt length based on pulley difference
+                const term3 = Math.pow(drivenPulley - motorPulley, 2) / (4 * centerDistance); 
                 const beltLength = term1 + term2 + term3;
 
+                // Belt Speed Formula (Feet per minute, where diameter is in inches)
+                // (RPM * PI * D) / 12
                 const beltSpeed = (motorRpm * Math.PI * motorPulley) / 12;
 
                 // --- Convert to Standard Belt Sizes ---
+                // Standard V-belt length (e.g., A40 is 40 inches inside circumference)
+                // We use the calculated length (outside) and round it to find the closest standard size number.
                 const closestSize = Math.round(beltLength);
                 const aSeriesSize = `A${closestSize} or 4L${closestSize}0`;
                 const bSeriesSize = `B${closestSize} or 5L${closestSize}0`;
