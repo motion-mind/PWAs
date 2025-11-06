@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple PID Tuner</title>
+    <title>PPCL Control Loop Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -25,209 +25,155 @@
             padding: 2.5rem;
             border-radius: 1rem;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced outer shadow for 3D effect */
-            max-width: 28rem;
+            max-width: 42rem; /* Wider for the two-column layout */
             width: 100%;
             border: 1px solid #e5e7eb;
         }
 
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: #4a5568; /* Darker text for labels */
-        }
-
         /* 3D Input Style */
-        .input-group input {
+        .input-text {
             width: 100%;
             padding: 0.75rem;
             border-radius: 0.5rem;
-            background-color: #f8fafc; /* Very light background for inputs */
-            border: 1px solid #cbd5e1; /* Lighter border */
-            color: #475569; /* Darker text for input content */
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            color: #475569;
             transition: all 0.2s ease-in-out, transform 0.1s;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Initial inner shadow for 3D effect */
+            font-size: 1.125rem; /* Large text size from original */
         }
 
-        .input-group input:focus {
+        .input-text:focus {
             outline: none;
-            border-color: #6366f1; /* Indigo focus border */
+            border-color: #6366f1;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
         }
 
-        .input-group input:active {
+        .input-text:active {
             transform: translateY(1px); /* Pressed effect */
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         /* 3D Button Style */
-        button {
+        .calculate-btn {
             width: 100%;
             padding: 0.75rem 1.5rem;
             font-weight: 700;
             border-radius: 0.5rem;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s;
+            background-color: #2563eb; /* Blue */
+            color: #e2e8f0;
             border: none;
             cursor: pointer;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* 3D initial shadow */
+            font-size: 1.125rem;
         }
 
-        button:hover {
+        .calculate-btn:hover {
+            background-color: #047857; /* Green on hover */
             transform: translateY(-2px);
             box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
 
-        button:active {
+        .calculate-btn:active {
             transform: translateY(1px); /* Pressed effect */
             box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
         }
         
-        .calculate-btn {
-            background-color: #2563eb; /* Blue */
-            color: #e2e8f0;
-        }
-        .calculate-btn:hover {
-            background-color: #047857; /* Green on hover */
+        /* Result and Input Backgrounds */
+        .input-box-bg {
+             background-color: #ffffff; /* White background for input sections */
+             border: 1px solid #e5e7eb;
+             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
-        .result-box {
-            background-color: #e0f2fe;
-            border: 1px solid #90cdf4;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            margin-top: 1.5rem;
-        }
         .result-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
         }
-        .result-item strong {
-            font-size: 1.5rem;
-            color: #1e40af;
-        }
-        .result-item span {
-            font-weight: 600;
-            color: #374151;
-        }
-        .error-message {
-            color: #dc2626;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            text-align: center;
+        .result-value {
+            font-size: 2.25rem; /* text-4xl equivalent for impact */
+            font-weight: 700;
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
+
     <div class="container-card">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Simple PID Tuner (IMC Method)</h1>
-        <p class="text-center text-sm mb-8 text-gray-500">
-            Enter the three key parameters of your process: **Process Gain ($K_p$), Time Constant ($\tau$), and Dead Time ($L$)**.
-        </p>
-
-        <div class="input-group">
-            <label for="kp">Process Gain (Kp)</label>
-            <input type="number" id="kp" placeholder="e.g., 2.5 (ΔOutput / ΔInput)" step="any">
-        </div>
-
-        <div class="input-group">
-            <label for="tau">Time Constant (Tau) (Time to reach 63.2% of final change)</label>
-            <input type="number" id="tau" placeholder="e.g., 5.0 (seconds or minutes)" step="any">
-        </div>
-
-        <div class="input-group">
-            <label for="L">Dead Time (L) (Delay before process responds)</label>
-            <input type="number" id="L" placeholder="e.g., 1.5 (same unit as Tau)" step="any">
-        </div>
-
-        <button id="calculateBtn" class="calculate-btn">Calculate PID Values</button>
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">PPCL Control Loop Calculator</h1>
+        <p class="text-center text-gray-500 mb-6 text-base">Calculates Proportional Gain (pg) and starting Integral Gain (ig) based on the control range and throttling range.</p>
         
-        <p id="errorMessage" class="error-message hidden"></p>
+        <div id="standard-pid" class="tab-content">
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="input-box-bg p-5 rounded-lg">
+                    <label for="outputSpan" class="block text-lg font-semibold text-gray-700 mb-2">Output Control Span</label>
+                    <input type="number" id="outputSpan" value="100" placeholder="e.g., 100" class="input-text">
+                    <p class="text-sm text-gray-500 mt-2">Max Output - Min Output. e.g., 100.0 (for 0-100%) or 5.0 (for 3-8 psi).</p>
+                </div>
+                
+                <div class="input-box-bg p-5 rounded-lg">
+                    <label for="throttleRange" class="block text-lg font-semibold text-gray-700 mb-2">Throttling Range (TR)</label>
+                    <input type="number" id="throttleRange" value="5" placeholder="e.g., 5.0 °F" class="input-text">
+                    <p class="text-sm text-gray-500 mt-2">Desired error for 100% output change. Smaller TR = higher, more sensitive gain (pg).</p>
+                </div>
+            </div>
 
-        <div id="resultContainer" class="result-box hidden">
-            <div class="result-item">
-                <span>Proportional Gain (Kc or P)</span>
-                <strong id="result-P">--</strong>
-            </div>
-            <div class="result-item">
-                <span>Integral Time (Tau-I or I)</span>
-                <strong id="result-I">--</strong>
-            </div>
-            <div class="result-item">
-                <span>Derivative Time (Tau-D or D)</span>
-                <strong id="result-D">--</strong>
+            <button onclick="calculateStandardPID()" class="calculate-btn">Calculate Initial Gains</button>
+
+            <div id="pidResults" class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg hidden">
+                <h3 class="text-xl font-bold text-blue-800 mb-4">Calculated Initial Gains:</h3>
+                
+                <div class="mt-4 space-y-4">
+                    <div class="result-item bg-white p-3 rounded-md shadow-sm">
+                        <span class="text-lg font-semibold text-gray-800">Proportional Gain (pg):</span>
+                        <span id="resultPG" class="font-bold text-indigo-700 result-value">0</span>
+                    </div>
+                    <div class="result-item bg-white p-3 rounded-md shadow-sm">
+                        <span class="text-lg font-semibold text-gray-800">Initial Integral Gain (ig):</span>
+                        <span id="resultIG" class="font-bold text-indigo-700 result-value">0</span>
+                    </div>
+                </div>
+                
+                <p class="text-base text-gray-600 mt-5 border-t pt-3 border-blue-300">
+                    *Formula: pg = (Output Span / TR) × 1000. ig = pg × 0.02 (Recommended start).
+                </p>
+                <p class="text-sm text-gray-500 mt-2">
+                    Note: Derivative gain (dg) is assumed 0. Final tuning is manual after pg and ig are set.
+                </p>
             </div>
         </div>
-        
-        <p class="text-center text-xs text-gray-400 mt-4">
-            Note: These values are suggestions and typically require final manual tuning.
-        </p>
     </div>
 
     <script>
-        /**
-         * Calculates PID values using a simplified Internal Model Control (IMC) correlation 
-         * for a First-Order Plus Dead-Time (FOPDT) model (common in industrial process control).
-         */
-        function calculatePID() {
-            const Kp_process = parseFloat(document.getElementById('kp').value);
-            const tau = parseFloat(document.getElementById('tau').value);
-            const L = parseFloat(document.getElementById('L').value);
+        // --- Standard PID Calculation (LOOP Command) ---
 
-            const resultContainer = document.getElementById('resultContainer');
-            const errorMessageDiv = document.getElementById('errorMessage');
-
-            // Hide previous results/errors
-            resultContainer.classList.add('hidden');
-            errorMessageDiv.classList.add('hidden');
-
-            // Input Validation
-            if (isNaN(Kp_process) || Kp_process === 0 || isNaN(tau) || tau <= 0 || isNaN(L) || L < 0) {
-                errorMessageDiv.textContent = 'Please enter valid, non-zero values for Process Gain (Kp) and a positive Time Constant (Tau). Dead Time (L) must be non-negative.';
-                errorMessageDiv.classList.remove('hidden');
+        function calculateStandardPID() {
+            const span = parseFloat(document.getElementById('outputSpan').value);
+            const throttle = parseFloat(document.getElementById('throttleRange').value);
+            // DG is removed from input and is assumed 0 for the LOOP command
+            const dg = 0; 
+            const resultsDiv = document.getElementById('pidResults');
+            
+            // Input validation: ensure inputs are valid positive numbers
+            if (isNaN(span) || isNaN(throttle) || span <= 0 || throttle <= 0 || isNaN(dg)) {
+                resultsDiv.classList.add('hidden');
                 return;
             }
 
-            // 1. Calculate the desired closed-loop time constant ($\tau_c$)
-            // Setting the aggression factor. A common, robust choice is to set it relative to Dead Time.
-            // This is a common simplification: \tau_c = \max(L, \tau/5)
-            const tau_c = Math.max(L, tau / 5); 
-
-            // 2. Calculate Proportional Gain ($K_c$) (The P value in controller terms)
-            // Formula: K_c = \frac{1}{K_p} \cdot \frac{\tau}{\tau_c + L}
-            const Kc = (1 / Kp_process) * (tau / (tau_c + L));
+            // Formula: pg = (Output Span / Throttling Range) * 1000 
+            const pg = (span / throttle) * 1000;
             
-            // 3. Calculate Integral Time ($\tau_I$) (The I value)
-            // Formula: \tau_I = \tau
-            const Ti = tau; 
+            // Formula: ig = pg * 0.02 (Recommended starting point: 2% of pg)
+            const ig = pg * 0.02;
 
-            // 4. Calculate Derivative Time ($\tau_D$) (The D value)
-            // Formula: \tau_D = \frac{\tau L}{2\tau + L} (A common, more stable IMC approximation)
-            const Td = (tau * L) / (2 * tau + L); 
-
-            // Display the results
-            document.getElementById('result-P').textContent = Kc.toFixed(3);
-            document.getElementById('result-I').textContent = Ti.toFixed(3);
-            document.getElementById('result-D').textContent = Td.toFixed(3);
-            resultContainer.classList.remove('hidden');
+            document.getElementById('resultPG').textContent = pg.toFixed(0);
+            document.getElementById('resultIG').textContent = ig.toFixed(0);
+            
+            resultsDiv.classList.remove('hidden');
         }
-
-        document.getElementById('calculateBtn').addEventListener('click', calculatePID);
-
-        // Optional: Trigger calculation on 'Enter' key press in any input field
-        document.querySelectorAll('.input-group input').forEach(input => {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    calculatePID();
-                }
-            });
-        });
     </script>
 </body>
 </html>
