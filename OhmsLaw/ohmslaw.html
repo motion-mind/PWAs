@@ -104,54 +104,22 @@
             transform: translateY(-2px);
         }
 
-        /* Ohm's Law Triangle Styling (Pictogram) */
-        .ohm-triangle {
-            width: 150px;
-            height: 130px;
-            margin: 0 auto 20px;
-            position: relative;
-            background: #f7f7f7;
-            border: 3px solid #333;
-            border-radius: 10px;
-            overflow: hidden;
+        /* Formula Display Styling */
+        .formula-display {
             display: flex;
             flex-direction: column;
-        }
-
-        .ohm-triangle::before {
-            content: 'V';
-            position: absolute;
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .ohm-triangle-bottom {
-            display: flex;
-            height: 50%;
-            border-top: 3px solid #333;
-        }
-
-        .ohm-triangle-current, .ohm-triangle-resistance {
-            flex: 1;
-            display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
-            font-weight: 700;
+            padding: 15px;
+            margin-bottom: 25px;
+            background-color: #f1f5f9; /* Light gray background */
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+        .formula-display p {
+            font-size: 1.1em;
+            font-weight: 600;
             color: #333;
-        }
-
-        .ohm-triangle-current {
-            content: 'I';
-            border-right: 3px solid #333;
-        }
-
-        .ohm-triangle-resistance {
-            content: 'R';
+            margin: 4px 0;
         }
     </style>
 </head>
@@ -162,14 +130,11 @@
             Enter any two values to calculate the others.
         </p>
 
-        <div class="flex justify-center mb-8">
-            <div class="ohm-triangle">
-                <div style="height: 50%;"></div>
-                <div class="ohm-triangle-bottom">
-                    <div class="ohm-triangle-current">I</div>
-                    <div class="ohm-triangle-resistance">R</div>
-                </div>
-            </div>
+        <div class="formula-display">
+            <p>Voltage (V): $V = I \times R$</p>
+            <p>Current (I): $I = V / R$</p>
+            <p>Resistance (R): $R = V / I$</p>
+            <p>Power (P): $P = V \times I$</p>
         </div>
 
         <div class="input-group">
