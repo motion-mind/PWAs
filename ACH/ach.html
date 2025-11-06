@@ -21,10 +21,28 @@
             background-color: #e2e8f0; /* Lighter gray for disabled inputs */
             cursor: not-allowed;
         }
+
+        /* Styling for the main calculator container */
+        .container-3d {
+            background-color: #f7f7f7; /* Light Gray Background */
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.05); /* Added outer shadow for 3D effect */
+            border: 1px solid #e5e7eb;
+        }
+
+        /* 3D look for the select button (acting as a primary control) */
+        select {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        select:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen bg-black p-4">
-    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+    <div class="container-3d p-8 w-full max-w-md">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Flexible ACH Calculator</h1>
 
         <div class="mb-6">
