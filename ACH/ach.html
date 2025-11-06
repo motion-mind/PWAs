@@ -4,21 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flexible ACH Calculator</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter font from Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Link to manifest.json for PWA capabilities -->
     <link rel="manifest" href="manifest.json">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
+            background-color: #000000; /* Black background */
         }
         /* Custom styles for better focus and interaction */
         input:focus, button:focus, select:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Blue glow on focus */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); /* Indigo glow on focus (similar to index.html buttons) */
         }
         input:disabled {
             background-color: #e2e8f0; /* Lighter gray for disabled inputs */
@@ -30,54 +27,48 @@
     <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Flexible ACH Calculator</h1>
 
-        <!-- Calculation Mode Selection -->
         <div class="mb-6">
             <label for="calculationMode" class="block text-gray-700 text-sm font-semibold mb-2">
                 What do you want to calculate?
             </label>
             <select id="calculationMode"
-                    class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+                    class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out">
                 <option value="ach">Air Changes Per Hour (ACH)</option>
                 <option value="cfm">Cubic Feet per Minute (CFM)</option>
                 <option value="volume">Room Volume (Cubic Feet)</option>
             </select>
         </div>
 
-        <!-- Input for CFM -->
         <div class="mb-4">
             <label for="cfm" class="block text-gray-700 text-sm font-semibold mb-2">
                 CFM (Cubic Feet per Minute)
             </label>
             <input type="number" id="cfm" placeholder="e.g., 500"
-                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out">
         </div>
 
-        <!-- Input for ACH -->
         <div class="mb-4">
             <label for="achInput" class="block text-gray-700 text-sm font-semibold mb-2">
                 Air Changes Per Hour (ACH)
             </label>
             <input type="number" id="achInput" placeholder="e.g., 5"
-                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out">
         </div>
 
-        <!-- Input for Room Volume -->
         <div class="mb-6">
             <label for="roomVolumeInput" class="block text-gray-700 text-sm font-semibold mb-2">
                 Room Volume (Cubic Feet)
             </label>
             <input type="number" id="roomVolumeInput" placeholder="e.g., 960 (10x12x8)"
-                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out">
+                   class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 ease-in-out">
         </div>
 
-        <!-- Result Display -->
         <div id="resultContainer" class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center hidden">
             <p class="text-gray-700 text-sm font-semibold mb-2">Result:</p>
             <p id="calculatedResult" class="text-4xl font-extrabold text-blue-700"></p>
             <p id="resultUnit" class="text-gray-600 text-lg mt-2"></p>
         </div>
 
-        <!-- Error Message Display -->
         <div id="errorContainer" class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg text-center hidden">
             <p id="errorMessage" class="text-red-700 font-medium"></p>
         </div>
@@ -234,4 +225,3 @@
     </script>
 </body>
 </html>
-
