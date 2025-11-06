@@ -9,8 +9,9 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #1a202c;
-            color: #e2e8f0;
+            /* Match background to index.html dark theme (using pure black) */
+            background-color: #000000;
+            color: #1f2937; /* Changed text color for white background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,13 +20,14 @@
         }
 
         .container {
-            max-width: 28rem;
+            /* Match index.html: max-w-md (approx 28rem/448px) and other card styles */
+            max-width: 28rem; 
             width: 100%;
-            background-color: #2d3748;
+            background-color: #ffffff; /* White background to match index.html container */
             border-radius: 1rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            padding: 2.5rem;
-            border: 1px solid #4a5568;
+            padding: 2.5rem; /* Equivalent to p-8 in Tailwind */
+            border: 1px solid #e5e7eb; /* Light border */
         }
 
         .input-group {
@@ -36,28 +38,28 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
-            color: #a0aec0;
+            color: #4b5563; /* Darker label color for white background */
         }
 
         .input-group input, .input-group select {
             width: 100%;
             padding: 0.75rem;
             border-radius: 0.5rem;
-            background-color: #4a5568;
-            border: 1px solid #718096;
-            color: #e2e8f0;
+            background-color: #f3f4f6; /* Light gray background for input field */
+            border: 1px solid #d1d5db; /* Light border */
+            color: #1f2937; /* Dark text color */
             transition: all 0.2s ease-in-out;
         }
 
         .input-group input:focus, .input-group select:focus {
             outline: none;
-            border-color: #63b3ed;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
         }
 
         .input-group input[readonly] {
-            background-color: #2d3748;
-            border-color: #718096;
+            background-color: #e5e7eb; /* Slightly darker read-only background */
+            border-color: #d1d5db;
             cursor: not-allowed;
         }
 
@@ -76,16 +78,16 @@
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             border: none;
             cursor: pointer;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            color: #ffffff; /* Ensure button text is white */
         }
 
         .calculate-btn {
-            background-color: #38a169;
-            color: #e2e8f0;
+            background-color: #10b981; /* Blue-600 equivalent for primary action */
         }
 
         .calculate-btn:hover {
-            background-color: #2f855a;
+            background-color: #059669; /* Darker green on hover */
             transform: translateY(-2px);
         }
 
@@ -94,12 +96,11 @@
         }
 
         .clear-btn {
-            background-color: #e53e3e;
-            color: #e2e8f0;
+            background-color: #ef4444; /* Red for secondary action */
         }
 
         .clear-btn:hover {
-            background-color: #c53030;
+            background-color: #dc2626;
             transform: translateY(-2px);
         }
 
@@ -110,8 +111,8 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-3xl font-bold text-center mb-6">Ohm's Law Calculator</h1>
-        <p class="text-center text-sm mb-8 text-gray-400">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Ohm's Law Calculator</h1>
+        <p class="text-center text-sm mb-8 text-gray-500">
             Enter any two values to calculate the others.
         </p>
 
@@ -224,24 +225,28 @@
 
                 const dialogBox = document.createElement('div');
                 dialogBox.style.cssText = `
-                    background-color: #2d3748; padding: 2rem; border-radius: 1rem;
+                    background-color: #ffffff; padding: 2rem; border-radius: 1rem;
                     max-width: 20rem; width: 90%; text-align: center;
-                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); border: 1px solid #4a5568;
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); border: 1px solid #e5e7eb;
+                    color: #1f2937; /* Dark text for the dialog */
                 `;
 
                 const dialogText = document.createElement('p');
                 dialogText.textContent = message;
                 dialogText.style.cssText = `
-                    color: #e2e8f0; margin-bottom: 1.5rem; font-size: 1rem;
+                    color: inherit; margin-bottom: 1.5rem; font-size: 1rem;
                 `;
 
                 const closeBtn = document.createElement('button');
                 closeBtn.textContent = 'OK';
                 closeBtn.style.cssText = `
-                    background-color: #4299e1; color: white; padding: 0.5rem 2rem;
+                    background-color: #3b82f6; color: white; padding: 0.5rem 2rem;
                     border-radius: 0.5rem; font-weight: 600; cursor: pointer;
                     transition: background-color 0.2s ease-in-out;
                 `;
+                closeBtn.addEventListener('mouseover', (e) => e.target.style.backgroundColor = '#2563eb');
+                closeBtn.addEventListener('mouseout', (e) => e.target.style.backgroundColor = '#3b82f6');
+
 
                 closeBtn.addEventListener('click', () => {
                     document.body.removeChild(dialogOverlay);
