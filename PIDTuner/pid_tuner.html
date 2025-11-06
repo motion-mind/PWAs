@@ -108,23 +108,10 @@
         
         <div id="standard-pid" class="tab-content">
             
-            <div class="grid md:grid-cols-3 gap-6 mb-6">
-                
-                <div class="input-box-bg p-5 rounded-lg md:col-span-1">
-                    <label for="engineeringUnits" class="block text-lg font-semibold text-black mb-2">Engineering Units</label>
-                    <select id="engineeringUnits" class="input-text">
-                        <option value="%">%</option>
-                        <option value="V">V</option>
-                        <option value="mA">mA</option>
-                        <option value="psi">psi</option>
-                        <option value="°F">°F</option>
-                        <option value="CFM">CFM</option>
-                    </select>
-                    <p class="text-sm text-gray-700 mt-2">Select the unit for the inputs below.</p>
-                </div>
+            <div class="grid md:grid-cols-2 gap-6 mb-6">
                 
                 <div class="input-box-bg p-5 rounded-lg col-span-2">
-                    <label class="block text-lg font-semibold text-black mb-2">Output Control Range (Min and Max Output)</label>
+                    <label class="block text-lg font-semibold text-black mb-2">Output Control Range (Max Output - Min Output)</label>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <input type="number" id="minOutput" value="0" placeholder="Min Output (e.g., 0)" class="input-text">
