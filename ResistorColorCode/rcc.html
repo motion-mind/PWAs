@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000; /* Custom CSS for background-color: black */
+            background-color: #000000; /* Black background */
         }
 
         .resistor-body {
@@ -32,7 +32,7 @@
             height: 4px;
             background-color: #a0a0a0;
         }
-        
+
         .band-wrapper {
             display: flex;
             align-items: center;
@@ -44,21 +44,30 @@
             width: 25px;
             height: 100%;
         }
+        
+        /* Consistent focus style */
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5); /* Indigo glow */
+            border-color: #6366f1;
+        }
     </style>
 </head>
-<body class="bg-black flex items-center justify-center min-h-screen p-4"> <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Resistor Color Code Calculator</h1>
         <p class="text-center text-gray-500 mb-8">Select the colors to determine the resistance value.</p>
-        
+
         <div class="mb-8">
             <label class="block text-sm font-medium text-gray-700 mb-2">Resistor Type</label>
             <div class="flex items-center space-x-4">
                 <div class="flex items-center">
-                    <input id="resistor-type-4" name="resistor-type" type="radio" checked class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                    <input id="resistor-type-4" name="resistor-type" type="radio" checked class="focus:ring-blue-600 h-4 w-4 text-blue-600 border-gray-300">
                     <label for="resistor-type-4" class="ml-2 block text-sm font-medium text-gray-700">4-Band</label>
                 </div>
                 <div class="flex items-center">
-                    <input id="resistor-type-5" name="resistor-type" type="radio" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                    <input id="resistor-type-5" name="resistor-type" type="radio" class="focus:ring-blue-600 h-4 w-4 text-blue-600 border-gray-300">
                     <label for="resistor-type-5" class="ml-2 block text-sm font-medium text-gray-700">5-Band</label>
                 </div>
             </div>
@@ -67,13 +76,13 @@
         <div class="flex flex-col items-center mb-10">
             <div class="resistor-body relative flex items-center justify-center rounded-xl overflow-hidden">
                 <div class="resistor-lead absolute left-0 -ml-12 w-12 h-2 rounded-l-md bg-gray-500"></div>
-                
+
                 <div id="band1-visual" class="band w-8 h-full"></div>
                 <div id="band2-visual" class="band w-8 h-full"></div>
                 <div id="band3-visual" class="band w-8 h-full hidden"></div>
                 <div id="band4-visual" class="band w-8 h-full"></div>
                 <div id="band5-visual" class="band w-8 h-full"></div>
-                
+
                 <div class="resistor-lead absolute right-0 -mr-12 w-12 h-2 rounded-r-md bg-gray-500"></div>
             </div>
             <div class="text-center text-gray-600 mt-4">
@@ -135,7 +144,7 @@
         const band3Visual = document.getElementById('band3-visual');
         const band4Label = document.getElementById('band4-label');
         const band5Label = document.getElementById('band5-label');
-        
+
         const resultText = document.getElementById('result');
         const toleranceText = document.getElementById('tolerance');
 
@@ -166,7 +175,7 @@
 
         function switchResistorType() {
             const isFiveBand = radio5Band.checked;
-            
+
             if (isFiveBand) {
                 band3Container.classList.remove('hidden');
                 band3Visual.classList.remove('hidden');
@@ -217,7 +226,7 @@
                 multiplier = bandData[band4Color].multiplier;
                 tolerance = bandData[band5Color].tolerance;
             }
-            
+
             const resistance = parseFloat(significantDigits) * multiplier;
 
             // Format resistance with appropriate units
@@ -239,7 +248,7 @@
         allSelects.forEach(select => {
             select.addEventListener('change', updateResistor);
         });
-        
+
         // Add event listeners to radio buttons
         radio4Band.addEventListener('change', switchResistorType);
         radio5Band.addEventListener('change', switchResistorType);
