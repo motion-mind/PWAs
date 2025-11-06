@@ -9,9 +9,8 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Match background to index.html/ach.html dark theme (pure black) */
-            background-color: #000000;
-            color: #1f2937; /* Changed text color for white background */
+            background-color: #000000; /* Black background */
+            color: #e2e8f0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,15 +19,13 @@
         }
 
         .container {
-            /* Max-w-md constraint (28rem / 448px) to match ach.html */
-            max-width: 28rem; 
+            max-width: 28rem;
             width: 100%;
-            background-color: #ffffff; /* White background to match ach.html container */
-            border-radius: 0.5rem; /* rounded-lg to match ach.html */
-            /* Approximate shadow-xl to match ach.html */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            padding: 2rem; /* p-8 to match ach.html */
-            /* Border removed to match ach.html */
+            background-color: #ffffff; /* White card background */
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            border: 1px solid #e5e7eb; /* Light border */
         }
 
         .input-group {
@@ -39,27 +36,27 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
-            color: #4b5563; /* Darker label color for white background */
+            color: #4a5568; /* Darker text for labels */
         }
 
         .input-group input, .input-group select {
             width: 100%;
             padding: 0.75rem;
             border-radius: 0.5rem;
-            background-color: #f3f4f6; /* Light gray background for input field */
-            border: 1px solid #d1d5db; /* Light border */
-            color: #1f2937; /* Dark text color */
+            background-color: #f8fafc; /* Very light background for inputs */
+            border: 1px solid #cbd5e1; /* Lighter border */
+            color: #475569; /* Darker text for input content */
             transition: all 0.2s ease-in-out;
         }
 
         .input-group input:focus, .input-group select:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+            border-color: #6366f1; /* Indigo focus border (consistent with index.html button focus) */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.5);
         }
 
         .input-group input[readonly] {
-            background-color: #e5e7eb; /* Slightly darker read-only background */
+            background-color: #e5e7eb; /* Light gray for readonly */
             border-color: #d1d5db;
             cursor: not-allowed;
         }
@@ -79,16 +76,18 @@
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
             border: none;
             cursor: pointer;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            color: #ffffff; /* Ensure button text is white */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
         }
 
         .calculate-btn {
-            background-color: #10b981; /* Green color for primary action */
+            /* Matched to blue-600 in index.html */
+            background-color: #2563eb;
+            color: #e2e8f0;
         }
 
         .calculate-btn:hover {
-            background-color: #059669; /* Darker green on hover */
+            /* Matched to green-700 in index.html */
+            background-color: #047857;
             transform: translateY(-2px);
         }
 
@@ -97,11 +96,12 @@
         }
 
         .clear-btn {
-            background-color: #ef4444; /* Red for secondary action */
+            background-color: #e53e3e;
+            color: #e2e8f0;
         }
 
         .clear-btn:hover {
-            background-color: #dc2626;
+            background-color: #c53030;
             transform: translateY(-2px);
         }
 
@@ -110,7 +110,7 @@
         }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen bg-black p-4">
     <div class="container">
         <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Ohm's Law Calculator</h1>
         <p class="text-center text-sm mb-8 text-gray-500">
@@ -131,7 +131,7 @@
             <label for="resistance">Resistance (R)</label>
             <input type="number" id="resistance" placeholder="Enter resistance">
         </div>
-        
+
         <div class="input-group">
             <label for="power">Power (P)</label>
             <input type="number" id="power" placeholder="Enter power">
@@ -229,25 +229,21 @@
                     background-color: #ffffff; padding: 2rem; border-radius: 1rem;
                     max-width: 20rem; width: 90%; text-align: center;
                     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); border: 1px solid #e5e7eb;
-                    color: #1f2937; /* Dark text for the dialog */
                 `;
 
                 const dialogText = document.createElement('p');
                 dialogText.textContent = message;
                 dialogText.style.cssText = `
-                    color: inherit; margin-bottom: 1.5rem; font-size: 1rem;
+                    color: #4a5568; margin-bottom: 1.5rem; font-size: 1rem;
                 `;
 
                 const closeBtn = document.createElement('button');
                 closeBtn.textContent = 'OK';
                 closeBtn.style.cssText = `
-                    background-color: #3b82f6; color: white; padding: 0.5rem 2rem;
+                    background-color: #4299e1; color: white; padding: 0.5rem 2rem;
                     border-radius: 0.5rem; font-weight: 600; cursor: pointer;
                     transition: background-color 0.2s ease-in-out;
                 `;
-                closeBtn.addEventListener('mouseover', (e) => e.target.style.backgroundColor = '#2563eb');
-                closeBtn.addEventListener('mouseout', (e) => e.target.style.backgroundColor = '#3b82f6');
-
 
                 closeBtn.addEventListener('click', () => {
                     document.body.removeChild(dialogOverlay);
