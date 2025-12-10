@@ -182,14 +182,14 @@
 
             <h2>Tension Check Inputs (Optional)</h2>
             <div class="input-group">
-                <label for="span-length">Belt Span Length (inches)</label>
-                <input type="number" id="span-length" placeholder="Span between pulleys (e.g., 48)" step="0.1">
+                <label for="span-length">Belt Span Length (inches) [cite: 4]</label>
+                <input type="number" id="span-length" placeholder="Span between pulleys (LS) (e.g., 48)" step="0.1">
             </div>
             
             <div class="input-group">
-                <label for="num-belts">Number of Belts</label>
+                <label for="num-belts">Number of Belts in System/Band</label>
                 <input type="number" id="num-belts" value="1" min="1" step="1">
-                <p class="note">Enter the number of belts used. Required for tension calculation.</p>
+                <p class="note">Required for tension calculation. Force will be multiplied by this count for banded belts[cite: 2].</p>
             </div>
             
 
@@ -225,24 +225,48 @@
             </div>
 
             <div id="tension-check-results" class="result-item-group hidden">
-                <h4>Recommended Tensioning Data (Retensioning Minimum)</h4>
-                <div class="result-item">
-                    <span>Required Deflection Distance</span>
-                    <strong id="result-deflection-distance">--</strong>
-                </div>
-                <div class="result-item">
-                    <span>Total A-Series Min. Deflection Force</span>
-                    <strong id="result-min-force-a">--</strong>
-                </div>
-                <div class="result-item">
-                    <span>Total B-Series Min. Deflection Force</span>
-                    <strong id="result-min-force-b">--</strong>
-                </div>
+                <h4>Recommended Tensioning Data</h4>
+                
                 <p class="note-lg">
-                    **Tensioning Principle:** Apply the **Total Minimum Deflection Force** perpendicular to the belt span until it deflects by the **Required Deflection Distance** (1/64" per inch of span). 
+                    
+                    The lowest force at which the belt will not slip under maximum load is the proper tension.
+                    The force in the table should be multiplied by the number of belts in the band[cite: 2].
                 </p>
+
+                <div class="result-item-group" style="background-color: #e0f2fe; padding: 10px; margin-top: 10px;">
+                    <h5>Method 1: Standard Tension (Full Force, LS/64 Deflection)</h5>
+                    <div class="result-item">
+                        <span>Deflection Distance (LS / 64)</span>
+                        <strong id="result-deflection-distance-64">--</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Total A-Series Min. Retension Force</span>
+                        <strong id="result-min-force-a-64">--</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Total B-Series Min. Retension Force</span>
+                        <strong id="result-min-force-b-64">--</strong>
+                    </div>
+                </div>
+
+                <div class="result-item-group" style="background-color: #fef3c7; padding: 10px; margin-top: 10px;">
+                    <h5>Method 2: Half Tension (Half Force, LS/128 Deflection)</h5>
+                    <div class="result-item">
+                        <span>Deflection Distance (LS / 128) [cite: 5, 6]</span>
+                        <strong id="result-deflection-distance-128">--</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Total A-Series Half Retension Force</span>
+                        <strong id="result-min-force-a-128">--</strong>
+                    </div>
+                    <div class="result-item">
+                        <span>Total B-Series Half Retension Force</span>
+                        <strong id="result-min-force-b-128">--</strong>
+                    </div>
+                </div>
+
                 <p class="note">
-                    *Tension force for multiple belts is the single belt force multiplied by the number of belts.*
+                    *Force values are based on the smallest pulley diameter and the Retensioning Minimum column[cite: 1].*
                 </p>
             </div>
         </div>
@@ -251,13 +275,12 @@
     <script>
         // Function to look up the minimum retensioning force (Lbs) based on V-Belt Tensioning table
         function getMinTensionForce(beltType, dia) {
-            [cite_start]// Data simplified from the table: Retensioning Minimum (Lbs) [cite: 1]
+            // Data simplified from the table: Retensioning Minimum (Lbs) [cite: 1]
             if (beltType === 'A') {
                 if (dia >= 5.1) return 4.1;
                 if (dia >= 4.1) return 3.5;
-                if (dia >= 3.1) return 2.8;
-                if (dia >= 3.0) return 2.4;
-                return 0; // Return 0 if diameter is outside table range
+                if (dia >= 3.0) return 2.8;
+                return 0; // Out of range for A
             } else if (beltType === 'B') {
                 if (dia >= 7.1) return 6.8;
                 if (dia >= 5.7) return 6.2;
@@ -282,7 +305,7 @@
                 const drivenPulley = parseFloat(document.getElementById('driven-pulley').value);
                 const centerDistance = parseFloat(document.getElementById('center-distance').value);
 
-                // 2. Get Tension Inputs (These are now OPTIONAL)
+                // 2. Get Tension Inputs (Optional)
                 const spanLength = parseFloat(document.getElementById('span-length').value);
                 const numBelts = parseInt(document.getElementById('num-belts').value);
                 
@@ -297,7 +320,7 @@
                 }
                 
                 // --- Determine if Tension Check should be performed ---
-                // We perform the check only if both inputs are present AND valid positive numbers.
+                // We perform the check only if spanLength and numBelts are present AND valid positive numbers.
                 const shouldCheckTension = !isNaN(spanLength) && spanLength > 0 && 
                                            !isNaN(numBelts) && numBelts >= 1; 
 
@@ -323,37 +346,40 @@
                 tensionResultsDiv.classList.add('hidden'); 
                 
                 if (shouldCheckTension) {
-                    // Deflection distance is 1/64 inch per inch of span length
-                    const deflectionDistance = spanLength / 64; 
-                    const deflectionDistanceText = `${deflectionDistance.toFixed(3)} inches`;
-
-                    // Look up minimum deflection force for a single belt
+                    
+                    // --- Single Belt Minimum Forces (Retensioning Minimum) ---
                     const singleForceA = getMinTensionForce('A', smallPulleyDia);
                     const singleForceB = getMinTensionForce('B', smallPulleyDia);
-                    
-                    [cite_start]// Factor in the number of belts [cite: 2]
-                    const totalForceA = singleForceA * numBelts;
-                    const totalForceB = singleForceB * numBelts;
 
-                    // Format the force results
-                    let calculatedForceAText;
-                    if (singleForceA === 0) {
-                        calculatedForceAText = 'N/A (Pulley Size Out of Range)';
-                    } else {
-                        calculatedForceAText = `${totalForceA.toFixed(1)} lbs`;
-                    }
+                    // --- METHOD 1: STANDARD TENSION (LS/64, Full Force) ---
+                    const deflectionDistance64 = spanLength / 64; // Standard deflection distance
+                    const totalForceA64 = singleForceA * numBelts; // Multiply force by number of belts [cite: 2]
+                    const totalForceB64 = singleForceB * numBelts;
 
-                    let calculatedForceBText;
-                    if (singleForceB === 0) {
-                        calculatedForceBText = 'N/A (Pulley Size Out of Range)';
-                    } else {
-                        calculatedForceBText = `${totalForceB.toFixed(1)} lbs`;
-                    }
+                    // --- METHOD 2: HALF TENSION (LS/128, Half Force) ---
+                    const deflectionDistance128 = spanLength / 128; // Half deflection distance [cite: 5, 6]
+                    const totalForceA128 = (singleForceA / 2) * numBelts; // Half the force [cite: 3]
+                    const totalForceB128 = (singleForceB / 2) * numBelts;
                     
-                    // Display Tension Check Results
-                    document.getElementById('result-deflection-distance').textContent = deflectionDistanceText;
-                    document.getElementById('result-min-force-a').textContent = calculatedForceAText;
-                    document.getElementById('result-min-force-b').textContent = calculatedForceBText;
+                    // Helper function for text formatting
+                    const formatForceText = (force, singleForce) => {
+                        if (singleForce === 0) {
+                            return 'N/A (Pulley Size Out of Range)';
+                        } else {
+                            return `${force.toFixed(1)} lbs`;
+                        }
+                    };
+                    
+                    // --- Display Method 1 Results ---
+                    document.getElementById('result-deflection-distance-64').textContent = `${deflectionDistance64.toFixed(3)} inches`;
+                    document.getElementById('result-min-force-a-64').textContent = formatForceText(totalForceA64, singleForceA);
+                    document.getElementById('result-min-force-b-64').textContent = formatForceText(totalForceB64, singleForceB);
+
+                    // --- Display Method 2 Results ---
+                    document.getElementById('result-deflection-distance-128').textContent = `${deflectionDistance128.toFixed(3)} inches`;
+                    document.getElementById('result-min-force-a-128').textContent = formatForceText(totalForceA128, singleForceA);
+                    document.getElementById('result-min-force-b-128').textContent = formatForceText(totalForceB128, singleForceB);
+
                     tensionResultsDiv.classList.remove('hidden');
                 }
 
