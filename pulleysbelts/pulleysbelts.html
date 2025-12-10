@@ -1,1 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belt & Pulley Calculator</title>
+    <style>
+        :root {
+            --primary-color: #2563eb; /* Blue-600 for consistency with index.html buttons */
+            --secondary-color: #343a40;
+            --background-color: #000000; /* Black background */
+            --card-background: #f7f7f7; /* Light Gray Background */
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --focus-color: rgba(99, 102, 241, 0.5); /* Indigo focus glow */
+        }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Enhanced outer shadow for 3D effect */
+            padding: 30px;
+        }
+        header h1 {
+            font-size: 1.75em;
+            color: var(--secondary-color);
+            text-align: center;
+            margin: 0 0 25px 0;
+        }
+        .input-group {
+            margin-bottom: 18px;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Initial inner shadow for 3D effect */
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #6366f1; /* Indigo focus border */
+            box-shadow: 0 0 0 3px var(--focus-color);
+        }
+        .input-group input:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* 3D initial shadow */
+        }
+        button:hover {
+            background-color: #047857; /* Green-700 for consistency with index.html buttons */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        button:active {
+            transform: translateY(1px); /* Pressed effect */
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        #results {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        #results.hidden {
+            display: none;
+        }
+        #results h2 {
+            font-size: 1.5em;
+            margin: 0 0 15px 0;
+            text-align: center;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: #ffffff;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        .result-item span {
+            color: #495057;
+        }
+        .result-item strong {
+            color: var(--primary-color);
+            font-size: 1.1em;
+        }
+        .result-item-group {
+            background-color: #f1f3f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .result-item-group h4 {
+            margin: 0 0 12px 0;
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 1.1em;
+        }
+        .note {
+            font-size: 0.85em;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .note-lg {
+            font-size: 0.9em;
+            color: #333;
+            text-align: left;
+            margin-top: 5px;
+            padding: 10px;
+            background-color: #ffe4e6; /* Light warning color */
+            border: 1px dashed #f00;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
 
+    <div class="container">
+        <header>
+            <h1>Belt & Pulley Calculator ⚙️</h1>
+        </header>
+
+        <form id="calculator-form">
+            <h2>Drive System Inputs</h2>
+            <div class="input-group">
+                <label for="motor-rpm">Motor RPM</label>
+                <input type="number" id="motor-rpm" value="1750" required>
+            </div>
+
+            <div class="input-group">
+                <label for="motor-pulley">Motor Pulley Diameter (inches)</label>
+                <input type="number" id="motor-pulley" value="4" step="0.1" required>
+            </div>
+
+            <div class="input-group">
+                <label for="driven-pulley">Driven Pulley Diameter (inches)</label>
+                <input type="number" id="driven-pulley" value="8" step="0.1" required>
+            </div>
+
+            <div class="input-group">
+                <label for="center-distance">Center Distance (inches)</label>
+                <input type="number" id="center-distance" value="18" step="0.1" required>
+            </div>
+            
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #ccc;">
+
+            <h2>Tension Check Inputs</h2>
+            <div class="input-group">
+                <label for="span-length">Belt Span Length (inches)</label>
+                <input type="number" id="span-length" placeholder="Span between pulleys (e.g., 48)" step="0.1" required>
+            </div>
+            
+
+            <button type="submit">Calculate Drive & Check Tension</button>
+        </form>
+
+        <div id="results" class="hidden">
+            <h2>Results</h2>
+            <div class="result-item">
+                <span>Resulting Driven RPM</span>
+                <strong id="result-driven-rpm"></strong>
+            </div>
+            <div class="result-item">
+                <span>Speed Ratio</span>
+                <strong id="result-ratio"></strong>
+            </div>
+             <div class="result-item">
+                <span>Belt Speed</span>
+                <strong id="result-belt-speed"></strong>
+            </div>
+
+            <div class="result-item-group">
+                <h4>Suggested Belt Sizes</h4>
+                <div class="result-item">
+                    <span>A-Series (4L)</span>
+                    <strong id="result-belt-a"></strong>
+                </div>
+                <div class="result-item">
+                    <span>B-Series (5L)</span>
+                    <strong id="result-belt-b"></strong>
+                </div>
+                <p class="note">Your system's tensioning adjustment will determine the best fit.</p>
+            </div>
+
+            <div id="tension-check-results" class="result-item-group hidden">
+                <h4>Recommended Tensioning Data (Retensioning Minimum)</h4>
+                <div class="result-item">
+                    <span>Required Deflection Distance</span>
+                    <strong id="result-deflection-distance">--</strong>
+                </div>
+                <div class="result-item">
+                    <span>A-Series Minimum Deflection Force</span>
+                    <strong id="result-min-force-a">--</strong>
+                </div>
+                <div class="result-item">
+                    <span>B-Series Minimum Deflection Force</span>
+                    <strong id="result-min-force-b">--</strong>
+                </div>
+                <p class="note-lg">
+                    **Tensioning Principle:** Apply the **Minimum Deflection Force** perpendicular to the belt span until it deflects by the **Required Deflection Distance** (1/64" per inch of span).
+                </p>
+                <p class="note">
+                    *Tension force based on the smallest pulley diameter and V-Belt Tensioning table.*
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to look up the minimum retensioning force (Lbs) based on V-Belt Tensioning table 
+        function getMinTensionForce(beltType, dia) {
+            // Data simplified from the table: Retensioning Minimum (Lbs)
+            if (beltType === 'A') {
+                if (dia >= 5.1) return 4.1;
+                if (dia >= 4.1) return 3.5;
+                if (dia >= 3.1) return 2.8;
+                if (dia >= 3.0) return 2.4;
+                return 'N/A (< 3.0")';
+            } else if (beltType === 'B') {
+                if (dia >= 7.1) return 6.8;
+                if (dia >= 5.7) return 6.2;
+                if (dia >= 4.7) return 5.8;
+                if (dia >= 4.6) return 4.9;
+                return 'N/A (< 4.6")';
+            }
+            return 'N/A';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('calculator-form');
+            const resultsDiv = document.getElementById('results');
+            const tensionResultsDiv = document.getElementById('tension-check-results');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // 1. Get Drive Inputs
+                const motorRpm = parseFloat(document.getElementById('motor-rpm').value);
+                const motorPulley = parseFloat(document.getElementById('motor-pulley').value);
+                const drivenPulley = parseFloat(document.getElementById('driven-pulley').value);
+                const centerDistance = parseFloat(document.getElementById('center-distance').value);
+
+                // 2. Get Tension Input
+                const spanLength = parseFloat(document.getElementById('span-length').value);
+                
+                // Determine small sheave diameter
+                const smallPulleyDia = Math.min(motorPulley, drivenPulley);
+
+
+                // Validate Drive Inputs
+                if (isNaN(motorRpm) || isNaN(motorPulley) || isNaN(drivenPulley) || isNaN(centerDistance) || motorPulley <= 0 || drivenPulley <= 0) {
+                    alert('Please enter valid, positive numbers for all Drive System Inputs.');
+                    return;
+                }
+
+                // --- Drive Calculations ---
+                const speedRatio = drivenPulley / motorPulley;
+                const drivenRpm = motorRpm / speedRatio;
+
+                const term1 = 2 * centerDistance;
+                const term2 = (Math.PI * (drivenPulley + motorPulley)) / 2;
+                const term3 = Math.pow(drivenPulley - motorPulley, 2) / (4 * centerDistance);
+                const beltLength = term1 + term2 + term3;
+
+                // Belt Speed in FPM (Feet Per Minute)
+                const beltSpeed = (motorRpm * Math.PI * motorPulley) / 12;
+
+                // Convert to Standard Belt Sizes (This determines the belt type 'A' or 'B')
+                const closestSize = Math.round(beltLength);
+                const aSeriesSize = `A${closestSize} or 4L${closestSize}0`;
+                const bSeriesSize = `B${closestSize} or 5L${closestSize}0`;
+                
+                // --- Tension Calculation (Force/Deflection Method) ---
+                tensionResultsDiv.classList.add('hidden'); // Hide by default
+                let deflectionDistanceText = '--';
+                let calculatedForceAText = '--';
+                let calculatedForceBText = '--';
+                let isValidTensionCheck = false;
+
+                if (!isNaN(spanLength) && spanLength > 0) {
+                    // Deflection distance is 1/64 inch per inch of span length 
+                    const deflectionDistance = spanLength / 64; 
+                    deflectionDistanceText = `${deflectionDistance.toFixed(3)} inches`;
+
+                    // Look up minimum deflection force for A and B belts
+                    calculatedForceAText = getMinTensionForce('A', smallPulleyDia);
+                    calculatedForceBText = getMinTensionForce('B', smallPulleyDia);
+                    
+                    isValidTensionCheck = true;
+                }
+
+                // --- Display Results ---
+                document.getElementById('result-driven-rpm').textContent = `${drivenRpm.toFixed(0)} RPM`;
+                document.getElementById('result-ratio').textContent = `${speedRatio.toFixed(2)} : 1`;
+                document.getElementById('result-belt-speed').textContent = `${beltSpeed.toFixed(0)} FPM`;
+                document.getElementById('result-belt-a').textContent = aSeriesSize;
+                document.getElementById('result-belt-b').textContent = bSeriesSize;
+                
+                // Display Tension Check Results only if span length is valid/provided
+                if (isValidTensionCheck) {
+                    document.getElementById('result-deflection-distance').textContent = deflectionDistanceText;
+                    document.getElementById('result-min-force-a').textContent = calculatedForceAText + (calculatedForceAText !== 'N/A' ? ' lbs' : '');
+                    document.getElementById('result-min-force-b').textContent = calculatedForceBText + (calculatedForceBText !== 'N/A' ? ' lbs' : '');
+                    tensionResultsDiv.classList.remove('hidden');
+                }
+
+                resultsDiv.classList.remove('hidden');
+            });
+        });
+    </script>
+
+</body>
+</html>
